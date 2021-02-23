@@ -11,6 +11,7 @@ class Board:
         """
         if constraints is None:
             constraints = [[1, None, 3], [None, 2, None]]
+        self.constraints = constraints
         self.nrow = len(constraints)
         self.ncol = len(constraints[0])
         self._initialize()
@@ -101,13 +102,13 @@ class Board:
 
         here = self._point(row, col)
         # edge creation to right
-        if col <= self.ncol:
+        if col < self.ncol:
             down = self._point(row, col + 1)
             self.edges.append(
                 Edge(source=here, dest=down)
             )
         # edge creation to bottom
-        if col <= self.ncol:
+        if row < self.nrow:
             right = self._point(row + 1, col)
             self.edges.append(
                 Edge(source=here, dest=right)
@@ -126,19 +127,48 @@ class Board:
             down = self._point(row, col + 1)
             edges["down"] = self._edge(here, down)
 
-        left = self._point(row -1, col)
-        right = self._point(row + 1, col)
+        # objects are not used
+        # left = self._point(row - 1, col)
+        # right = self._point(row + 1, col)
 
         return [edge for edge in self.edges if edge.is_attached_to_point(here)]
+
+    @staticmethod
+    def delta_point(source, dest):
+        source = source.pos()
+        dest = dest.pos()
+        return source[0]-dest[0], source[1]-dest[1]
 
     def print(self):
         """
         placeholder for a method that prints the current state of the board
         This method does nothing yet
-        :param board: a Board object
         :return: a nice print (by default something has to be returned, so a None-value will be returned)
         """
-        pass
+        # organize edges
+        horizontal_edges = [[None]*self.ncol for i in range(self.nrow+1)]
+        vertical_edges = [[None]*(self.ncol+1) for i in range(self.nrow)]
+        for edge in self.edges:
+            delta_row, delta_col = Board.delta_point(edge.source, edge.dest)
+            source = edge.source.pos()
+            if delta_col == 0:
+                vertical_edges[source[0]][source[1]] = edge
+            else:  # if delta_row == 0:
+                horizontal_edges[source[0]][source[1]] = edge
+        # print edges
+        for i in range(2*self.nrow + 1):
+            if i % 2 == 0:
+                line = "+"
+                for column in range(self.ncol):
+                    line = line + ("---+" if horizontal_edges[int(i / 2)][column].status == "alive" else "   +")
+                print(line)
+            else:
+                line = "|" if vertical_edges[int((i - 1) / 2)][0].status == "alive" else " "
+                for column in range(self.ncol):
+                    digit = self.constraints[int((i - 1) / 2)][column]
+                    line = line + " " + (str(digit) if digit is not None else " ") + (" |" if \
+                    vertical_edges[int((i - 1) / 2)][column+1].status == "alive" else "  ")
+                print(line)
 
 if __name__ == "__main__":
     
