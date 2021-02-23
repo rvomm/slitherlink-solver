@@ -24,14 +24,13 @@ class Board:
         The full set of points is the union of all corners of each 
         of the cells.
 
-        Also need points outside of the grid (void points) they are 
-        not stored.  
+        Also fictional void point outside the grid are generated (not stored) to handle boundary conditions of the board
         """
         points = []
         for row in range(0, self.nrow + 1):
             for col in range(0, self.ncol + 1):
                 points.append(
-                    Point(row = row, col = col)
+                    Point(row=row, col=col)
                 )
         self.points = points
 
@@ -87,7 +86,7 @@ class Board:
 
     def _initialize_edges(self):
         """
-        For each point, simply create an edge from the point to the 
+        For each point, create an edge from the point to the
         point on the right and an edge to the point downwards. Skipping
         rightward edge creation for points on the most right column and
         skipping downward edge creation for bottom row.

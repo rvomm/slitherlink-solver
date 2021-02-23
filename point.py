@@ -11,6 +11,7 @@ class Point:
     def pos(self):
         return [self.row, self.col]
 
+
 if __name__ == "__main__":
     print(Point(1, 2))
     print(Point(0,0).pos())
