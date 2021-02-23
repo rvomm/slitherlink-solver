@@ -4,10 +4,15 @@ from edge import Edge
 
 class Board:
 
-    def __init__(self):
-        
-        self.nrow = 2
-        self.ncol = 3
+    def __init__(self, table=None):
+        """
+
+        :param table: rectangular list of digits. None means no digit in the corresponding square
+        """
+        if table is None:
+            table = [[1, None, 3], [None, 2, None]]
+        self.nrow = len(table)
+        self.ncol = len(table[0])
         self._initialize()
 
     def _initialize(self):
@@ -132,7 +137,15 @@ class Board:
         right = self._point(row + 1, col)
 
         return [edge for edge in self.edges if edge.is_attached_to_point(here)]
-        
+
+    def print(self):
+        """
+        placeholder for a method that prints the current state of the board
+        This method does nothing yet
+        :param board: a Board object
+        :return: a nice print (by default something has to be returned, so a None-value will be returned)
+        """
+        pass
 
 if __name__ == "__main__":
     
