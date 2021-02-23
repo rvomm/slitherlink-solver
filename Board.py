@@ -89,30 +89,31 @@ class Board:
     def _initialize_edges(self):
         """
         For each point, simply create an edge from the point to the 
-        point on the right and an edge to the point downwards. Skip 
-        edge creation for points on the most right column and bottom
-        row. 
+        point on the right and an edge to the point downwards. Skipping
+        rightward edge creation for points on the most right column and
+        skipping downward edge creation for bottom row.
         """
+
         self.edges = []
-        for row in range(0, self.nrow):
-            for col in range(0, self.ncol):
+        for row in range(self.nrow+1):
+            for col in range(self.ncol+1):
                 self._initialize_edge(row, col)
     
     def _initialize_edge(self, row, col):
 
         here = self._point(row, col)
-        if (row != self.nrow): 
+        # edge creation to right
+        if col <= self.ncol:
             down = self._point(row, col + 1)
             self.edges.append(
-                Edge(source = here, dest = down)
+                Edge(source=here, dest=down)
             )
-
-        if (col != self.ncol): 
+        # edge creation to bottom
+        if col <= self.ncol:
             right = self._point(row + 1, col)
             self.edges.append(
-                Edge(source = here, dest = right)
+                Edge(source=here, dest=right)
             )
-
     
     def _initialize_constraints(self): 
         """
