@@ -4,21 +4,20 @@ from edge import Edge
 
 class Board:
 
-    def __init__(self, table=None):
+    def __init__(self, constraints=None):
         """
 
-        :param table: rectangular list of digits. None means no digit in the corresponding square
+        :param constraints: rectangular list of digits. None means no digit in the corresponding square
         """
-        if table is None:
-            table = [[1, None, 3], [None, 2, None]]
-        self.nrow = len(table)
-        self.ncol = len(table[0])
+        if constraints is None:
+            constraints = [[1, None, 3], [None, 2, None]]
+        self.nrow = len(constraints)
+        self.ncol = len(constraints[0])
         self._initialize()
 
     def _initialize(self):
         self._initialize_points()
         self._initialize_edges()
-        self._initialize_constraints()
     
     def _initialize_points(self):
         """
@@ -114,12 +113,6 @@ class Board:
             self.edges.append(
                 Edge(source=here, dest=right)
             )
-    
-    def _initialize_constraints(self): 
-        """
-        TODO: Initialize cells
-        """ 
-        self.constraints = [['1', ' ', '2'], ['1', ' ', '3']]
 
     def _get_edges_from_point(self, row, col):
 
