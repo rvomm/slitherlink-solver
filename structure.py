@@ -4,6 +4,11 @@ import edge
 import point
 
 class Structure(ABC):
+    """
+    A structure is a superclass,
+    which is inherited from by square.StructureSquareWithTarget and crosspoint.StructureCross
+    mainly containing the boolean is_complete
+    """
     _cell_max = 4
 
     def __init__(self):
