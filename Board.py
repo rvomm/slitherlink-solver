@@ -168,17 +168,18 @@ class Board:
         # print edges
         for i in range(2*self.nrow + 1):
             if i % 2 == 0:
+                row_index = int(i/2)
                 line = "+"
-                for column in range(self.ncol):
-                    line = line + (horizontal_edges[int(i / 2)][column].draw_h()) + "+"
+                for column_index in range(self.ncol):
+                    line = line + (horizontal_edges[row_index][column_index].draw_h()) + "+"
                 print(line)
             else:
-                line = vertical_edges[int((i - 1) / 2)][0].draw_v()
-                for column in range(self.ncol):
-                    digit = self.constraints[int((i - 1) / 2)][column]
-                    line = line + " " + (str(digit) if digit is not None else " ") 
-                    line = line + " "
-                    line = line + (vertical_edges[int((i - 1) / 2)][column+1].draw_v())
+                row_index = int((i-1)/2)
+                line = vertical_edges[row_index][0].draw_v()
+                for column_index in range(self.ncol):
+                    digit = self.constraints[row_index][column_index]
+                    line = line + " " + (str(digit) if digit is not None else " ") + " "
+                    line = line + (vertical_edges[row_index][column_index+1].draw_v())
                 print(line)
 
 if __name__ == "__main__":
