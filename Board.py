@@ -2,6 +2,7 @@
 from point import Point
 from edge import Edge
 from crosspoint import StructureCross
+from square import StructureSquareWithTarget
 
 class Board:
 
@@ -21,6 +22,26 @@ class Board:
         self._initialize_points()
         self._initialize_edges()
         self._initialize_structure_crosspoints()
+        self._initialize_squares()
+
+    def _initialize_squares(self):
+        squares = []
+        for row_index, constraint_row in enumerate(self.constraints):
+            for column_index, constraint in enumerate(constraint_row):
+                if constraint is not None:
+                    ul = self._point(row_index, column_index)
+                    ur = self._point(row_index, column_index + 1)
+                    dl = self._point(row_index + 1, column_index)
+                    dr = self._point(row_index + 1, column_index + 1)
+
+                    edges = {
+                        "u": self._edge(ul, ur),
+                        "d": self._edge(dl, dr),
+                        "r": self._edge(ur, dr),
+                        "l": self._edge(ul, dl)
+                    }
+                    squares.append(StructureSquareWithTarget(constraint, edges))
+        self.squares = squares
     
     def _initialize_structure_crosspoints(self):
         

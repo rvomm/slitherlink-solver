@@ -21,6 +21,8 @@ if __name__ == "__main__":
         old_unknown_count = new_unknonw_count
         for cross in _board.structures:
             cross.update()
+        for square in _board.squares:
+            square.update()
         new_unknown_count = _board.unknonw_edge_count()
     # _board.structures[2].update()
     _board.print()
