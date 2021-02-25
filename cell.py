@@ -78,7 +78,7 @@ class CellThree(Cell):
     Cell three is almost as simple as cell 1. 
     """
     def draw(self):
-        return "4"
+        return "3"
     def target(self):
         return 3
 
