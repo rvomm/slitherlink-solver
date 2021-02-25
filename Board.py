@@ -26,7 +26,7 @@ class Board:
         
         crosspoints = []
         for point in self.points:
-            edges = self._get_edges_from_point(point.row, point.col)
+            edges = self._get_edges_from_point(point)
             obj = StructureCross(edges)
             crosspoints.append(obj)
 
@@ -126,19 +126,18 @@ class Board:
                 Edge(source=here, dest=right)
             )
 
-    def _get_edges_from_point(self, row, col):
+    def _get_edges_from_point(self, point):
 
-        here = self._point(row, col)
-        up = self._point(row + 1, col)
-        down = self._point(row - 1, col)
-        right = self._point(row, col + 1)
-        left = self._point(row, col - 1)
+        up = self._point(point.row + 1, point.col)
+        down = self._point(point.row - 1, point.col)
+        right = self._point(point.row, point.col + 1)
+        left = self._point(point.row, point.col - 1)
         
         edges = {
-            "u" : self._edge(here, up),
-            "d" : self._edge(here, down),
-            "r" : self._edge(here, right),
-            "l" : self._edge(here, left)
+            "u" : self._edge(point, up),
+            "d" : self._edge(point, down),
+            "r" : self._edge(point, right),
+            "l" : self._edge(point, left)
         }
         
         return edges
