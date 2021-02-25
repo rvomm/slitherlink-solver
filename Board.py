@@ -170,14 +170,15 @@ class Board:
             if i % 2 == 0:
                 line = "+"
                 for column in range(self.ncol):
-                    line = line + ("---+" if horizontal_edges[int(i / 2)][column].status == "alive" else "   +")
+                    line = line + (horizontal_edges[int(i / 2)][column].draw_h()) + "+"
                 print(line)
             else:
-                line = "|" if vertical_edges[int((i - 1) / 2)][0].status == "alive" else " "
+                line = vertical_edges[int((i - 1) / 2)][0].draw_v()
                 for column in range(self.ncol):
                     digit = self.constraints[int((i - 1) / 2)][column]
-                    line = line + " " + (str(digit) if digit is not None else " ") + (" |" if \
-                    vertical_edges[int((i - 1) / 2)][column+1].status == "alive" else "  ")
+                    line = line + " " + (str(digit) if digit is not None else " ") 
+                    line = line + " "
+                    line = line + (vertical_edges[int((i - 1) / 2)][column+1].draw_v())
                 print(line)
 
 if __name__ == "__main__":
