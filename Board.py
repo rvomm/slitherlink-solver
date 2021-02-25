@@ -1,6 +1,7 @@
 
 from point import Point
 from edge import Edge
+from crosspoint import StructureCross
 
 class Board:
 
@@ -19,7 +20,18 @@ class Board:
     def _initialize(self):
         self._initialize_points()
         self._initialize_edges()
+        self._initialize_structure_crosspoints()
     
+    def _initialize_structure_crosspoints(self):
+        
+        crosspoints = []
+        for point in self.points:
+            edges = self._get_edges_from_point(point.row, point.col)
+            obj = StructureCross(edges)
+            crosspoints.append(obj)
+
+        self.structures = crosspoints
+
     def _initialize_points(self):
         """
         The full set of points is the union of all corners of each 
@@ -116,22 +128,20 @@ class Board:
 
     def _get_edges_from_point(self, row, col):
 
-        edges = {}
         here = self._point(row, col)
-
-        if (row != 0):
-            up = self._point(row, col + 1)
-            edges["up"] = self._edge(here, up)
+        up = self._point(row + 1, col)
+        down = self._point(row - 1, col)
+        right = self._point(row, col + 1)
+        left = self._point(row, col - 1)
         
-        if (row != self.nrow): 
-            down = self._point(row, col + 1)
-            edges["down"] = self._edge(here, down)
-
-        # objects are not used
-        # left = self._point(row - 1, col)
-        # right = self._point(row + 1, col)
-
-        return [edge for edge in self.edges if edge.is_attached_to_point(here)]
+        edges = {
+            "u" : self._edge(here, up),
+            "d" : self._edge(here, down),
+            "r" : self._edge(here, right),
+            "l" : self._edge(here, left)
+        }
+        
+        return edges
 
     @staticmethod
     def delta_point(source, dest):
