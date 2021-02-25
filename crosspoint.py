@@ -12,10 +12,9 @@ class StructureCross(structure.Structure):
     are alive, kill the remaining two. If only one edge is left
     unknown, deduce status from the other 3 edges.
     """
-    def __init__(self, point, edges):
+    def __init__(self, edges):
         super().__init__()
 
-        self.point = point
         self.edges = edges
         
     def _update(self):

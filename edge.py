@@ -38,11 +38,11 @@ class Edge:
 
     def draw_h(self):
         if self.is_alive():
-            return "-"
+            return "---"
         elif self.is_dead():
-            return "x"
+            return " x "
         else: 
-            return " "
+            return "   "
 
     def draw_v(self):
         if self.is_alive(): 

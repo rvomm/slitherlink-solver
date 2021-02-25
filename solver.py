@@ -12,4 +12,10 @@ if __name__ == "__main__":
         if source[0] % 3 == 0 and dest[1] % 3 == 2:
             edge.make()
     _board.print()
-    print("breakpoint here in Pycharm")
+
+    print("___________________________________")
+    _board.structures[2].update()
+    _board.print()
+
+
+    
