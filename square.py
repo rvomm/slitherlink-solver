@@ -29,7 +29,7 @@ class StructureSquareWithTarget(structure.Structure):
         return out
 
     def _edges(self): 
-        return edges.values()
+        return self.edges.values()
 
     def _update(self):
         if (self._n_alive_equals_target()):

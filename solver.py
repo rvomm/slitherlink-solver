@@ -6,15 +6,19 @@ if __name__ == "__main__":
              [3, 3, None, 2],
              [None, None, 2, 2]]
     _board = Board(table)
-    for edge in _board.edges:
-        source = edge.source.pos()
-        dest = edge.dest.pos()
-        if source[0] % 3 == 0 and dest[1] % 3 == 2:
-            edge.make()
     _board.print()
 
     print("___________________________________")
-    _board.structures[2].update()
+
+    new_unknown_count = _board.unknonw_edge_count()
+    old_unknown_count = new_unknown_count + 1
+    while new_unknown_count < old_unknown_count:
+        old_unknown_count = new_unknown_count
+        for cross in _board.structures:
+            cross.update()
+        for square in _board.squares:
+            square.update()
+        new_unknown_count = _board.unknonw_edge_count()
     _board.print()
 
 

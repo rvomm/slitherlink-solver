@@ -2,6 +2,7 @@
 from point import Point
 from edge import Edge
 from crosspoint import StructureCross
+from square import StructureSquareWithTarget
 
 class Board:
 
@@ -21,6 +22,26 @@ class Board:
         self._initialize_points()
         self._initialize_edges()
         self._initialize_structure_crosspoints()
+        self._initialize_squares()
+
+    def _initialize_squares(self):
+        squares = []
+        for row_index, constraint_row in enumerate(self.constraints):
+            for column_index, constraint in enumerate(constraint_row):
+                if constraint is not None:
+                    ul = self._point(row_index, column_index)
+                    ur = self._point(row_index, column_index + 1)
+                    dl = self._point(row_index + 1, column_index)
+                    dr = self._point(row_index + 1, column_index + 1)
+
+                    edges = {
+                        "u": self._edge(ul, ur),
+                        "d": self._edge(dl, dr),
+                        "r": self._edge(ur, dr),
+                        "l": self._edge(ul, dl)
+                    }
+                    squares.append(StructureSquareWithTarget(constraint, edges))
+        self.squares = squares
     
     def _initialize_structure_crosspoints(self):
         
@@ -75,9 +96,15 @@ class Board:
         
         if (len(edge) == 1):
             return edge.pop()
-
         else: 
             return self._void_edge(source, dest)
+
+    def unknonw_edge_count(self):
+        count = 0
+        for edge in self.edges:
+            if edge.is_unknown():
+                count += 1
+        return count
 
     @staticmethod
     def _void_point(row, col):
@@ -167,17 +194,18 @@ class Board:
         # print edges
         for i in range(2*self.nrow + 1):
             if i % 2 == 0:
+                row_index = int(i/2)
                 line = "+"
-                for column in range(self.ncol):
-                    line = line + (horizontal_edges[int(i / 2)][column].draw_h()) + "+"
+                for column_index in range(self.ncol):
+                    line = line + (horizontal_edges[row_index][column_index].draw_h()) + "+"
                 print(line)
             else:
-                line = vertical_edges[int((i - 1) / 2)][0].draw_v()
-                for column in range(self.ncol):
-                    digit = self.constraints[int((i - 1) / 2)][column]
-                    line = line + " " + (str(digit) if digit is not None else " ") 
-                    line = line + " "
-                    line = line + (vertical_edges[int((i - 1) / 2)][column+1].draw_v())
+                row_index = int((i-1)/2)
+                line = vertical_edges[row_index][0].draw_v()
+                for column_index in range(self.ncol):
+                    digit = self.constraints[row_index][column_index]
+                    line = line + " " + (str(digit) if digit is not None else " ") + " "
+                    line = line + (vertical_edges[row_index][column_index+1].draw_v())
                 print(line)
 
 if __name__ == "__main__":
