@@ -10,10 +10,10 @@ if __name__ == "__main__":
 
     print("___________________________________")
 
-    new_unknonw_count = _board.unknonw_edge_count()
-    old_unknown_count = new_unknonw_count + 1
-    while new_unknonw_count < old_unknown_count:
-        old_unknown_count = new_unknonw_count
+    new_unknown_count = _board.unknonw_edge_count()
+    old_unknown_count = new_unknown_count + 1
+    while new_unknown_count < old_unknown_count:
+        old_unknown_count = new_unknown_count
         for cross in _board.structures:
             cross.update()
         for square in _board.squares:
