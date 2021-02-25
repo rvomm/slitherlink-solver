@@ -14,7 +14,15 @@ if __name__ == "__main__":
     _board.print()
 
     print("___________________________________")
-    _board.structures[2].update()
+
+    new_unknonw_count = _board.unknonw_edge_count()
+    old_unknown_count = new_unknonw_count + 1
+    while new_unknonw_count < old_unknown_count:
+        old_unknown_count = new_unknonw_count
+        for cross in _board.structures:
+            cross.update()
+        new_unknown_count = _board.unknonw_edge_count()
+    # _board.structures[2].update()
     _board.print()
 
 

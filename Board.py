@@ -75,9 +75,15 @@ class Board:
         
         if (len(edge) == 1):
             return edge.pop()
-
         else: 
             return self._void_edge(source, dest)
+
+    def unknonw_edge_count(self):
+        count = 0
+        for edge in self.edges:
+            if edge.is_unknown():
+                count += 1
+        return count
 
     @staticmethod
     def _void_point(row, col):
