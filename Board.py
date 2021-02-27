@@ -1,8 +1,7 @@
 
 from point import Point
 from edge import Edge
-from crosspoint import StructureCross
-from square import StructureSquareWithTarget
+from structure import CrossPlusSquare, Cross, TargetSquare
 
 class Board:
 
@@ -23,6 +22,7 @@ class Board:
         self._initialize_edges()
         self._initialize_structure_crosspoints()
         self._initialize_squares()
+        self._initialize_crossplussquares()
 
     def _initialize_squares(self):
         squares = []
@@ -40,18 +40,34 @@ class Board:
                         "r": self._edge(ur, dr),
                         "l": self._edge(ul, dl)
                     }
-                    squares.append(StructureSquareWithTarget(constraint, edges))
+                    squares.append(TargetSquare(constraint, edges))
         self.squares = squares
-    
+
+    def solve_iteration(self):
+        for cross in self.crosses:
+            cross.update()
+        for square in self.squares:
+            square.update()
+        for cross_plus_square in self.cross_plus_square_list:
+            cross_plus_square.update()
+
     def _initialize_structure_crosspoints(self):
-        
         crosspoints = []
         for point in self.points:
             edges = self._get_edges_from_point(point)
-            obj = StructureCross(edges)
+            obj = Cross(edges)
             crosspoints.append(obj)
 
-        self.structures = crosspoints
+        self.crosses = crosspoints
+
+    def _initialize_crossplussquares(self):
+        cross_plus_square_list = []
+        for cross in self.crosses:
+            for square in self.squares:
+                set_of_overlapping_edges = set(cross.edges.values()).intersection(set(square.edges.values()))
+                if len(set_of_overlapping_edges) > 1:
+                    cross_plus_square_list.append(CrossPlusSquare(cross, square))
+        self.cross_plus_square_list = cross_plus_square_list
 
     def _initialize_points(self):
         """
