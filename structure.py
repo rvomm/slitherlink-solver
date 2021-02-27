@@ -1,9 +1,5 @@
  
 from abc import ABC, abstractclassmethod
-import edge 
-import point
-from crosspoint import StructureCross
-from square import StructureSquareWithTarget
 
 class Structure(ABC):
     """
@@ -60,6 +56,90 @@ class Structure(ABC):
         return(sum(is_unknown))
 
 
+class EdgeSet(Structure):
+    def __init__(self, edges):
+        """
+        :param edges: list or set of edge objects
+        """
+        self.edges = edges
+        # for testing purposes
+        assert len(set.edges) <= 2
+
+
+class StructureCross(Structure):
+    """
+    A StructureCross is a set of four edges stemming from a single
+    point.
+
+    Rules: there can only be 0 or 2 active edges. If two edges
+    are alive, kill the remaining two. If only one edge is left
+    unknown, deduce status from the other 3 edges.
+    """
+
+    def __init__(self, edges):
+        super().__init__()
+
+        self.edges = edges
+
+    def _update(self):
+        if self._n_alive() == 2:
+            self._kill_remaining()
+        elif self._n_unknown() == 1:
+            if self._n_alive() == 1:
+                self._make_remaining()
+            else:
+                self._kill_remaining()
+
+    def _edges(self):
+        return list(self.edges.values())
+
+    def __repr__(self):
+        res = ""
+        for key, value in self.edges.items():
+            res = res + key + " : " + value.draw_h() + ", "
+        return res
+
+
+class StructureSquareWithTarget(Structure):
+    """
+    A square contains one cell and its surrounding edges.
+
+    Rules: the cell target is the number edges that must surround
+    the cell.
+    """
+
+    def __init__(self, target, edges):
+
+        super().__init__()
+
+        self._n_max = 4
+        self.target = target
+        self.edges = edges
+
+    def __repr__(self):
+        out = ""
+        for key, value in self.edges.items():
+            out = out + key + " : " + value.draw_h() + "\n"
+
+        return out
+
+    def _edges(self):
+        return self.edges.values()
+
+    def _update(self):
+        if (self._n_alive_equals_target()):
+            self._kill_remaining()
+
+        if (self._n_dead_equals_max_minus_target()):
+            self._make_remaining()
+
+    def _n_alive_equals_target(self):
+        return (self._n_alive() == self.target)
+
+    def _n_dead_equals_max_minus_target(self):
+        return (self._n_dead() == (self._n_max - self.target))
+
+
 class CrossPlusSquare(Structure):
     def __init__(self, cross: StructureCross, square: StructureSquareWithTarget):
         self.cross = cross
@@ -84,12 +164,3 @@ class CrossPlusSquare(Structure):
             self.opposing_edges._make_remaining()
         if self.outgoing_edges._n_alive() == 1 and self.square.target == 1:
             self.opposing_edges._kill_remaining()
-
-class EdgeSet(Structure):
-    def __init__(self, edges):
-        """
-        :param edges: list or set of edge objects
-        """
-        self.edges = edges
-        # for testing purposes
-        assert len(set.edges) <= 2

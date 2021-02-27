@@ -1,8 +1,7 @@
 
 from point import Point
 from edge import Edge
-from crosspoint import StructureCross
-from square import StructureSquareWithTarget
+from structure import CrossPlusSquare, StructureCross, StructureSquareWithTarget
 
 class Board:
 
