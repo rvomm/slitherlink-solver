@@ -1,7 +1,7 @@
 
 from point import Point
 from edge import Edge
-from structure import CrossPlusSquare, StructureCross, StructureSquareWithTarget
+from structure import CrossPlusSquare, Cross, TargetSquare
 
 class Board:
 
@@ -40,7 +40,7 @@ class Board:
                         "r": self._edge(ur, dr),
                         "l": self._edge(ul, dl)
                     }
-                    squares.append(StructureSquareWithTarget(constraint, edges))
+                    squares.append(TargetSquare(constraint, edges))
         self.squares = squares
 
     def solve_iteration(self):
@@ -55,7 +55,7 @@ class Board:
         crosspoints = []
         for point in self.points:
             edges = self._get_edges_from_point(point.row, point.col)
-            obj = StructureCross(edges)
+            obj = Cross(edges)
             crosspoints.append(obj)
 
         self.crosses = crosspoints

@@ -70,7 +70,7 @@ class EdgeSet(Structure):
         pass
 
 
-class StructureCross(Structure):
+class Cross(Structure):
     """
     A StructureCross is a set of four edges stemming from a single
     point.
@@ -104,7 +104,7 @@ class StructureCross(Structure):
         return res
 
 
-class StructureSquareWithTarget(Structure):
+class TargetSquare(Structure):
     """
     A square contains one cell and its surrounding edges.
 
@@ -145,7 +145,7 @@ class StructureSquareWithTarget(Structure):
 
 
 class CrossPlusSquare(Structure):
-    def __init__(self, cross: StructureCross, square: StructureSquareWithTarget):
+    def __init__(self, cross: Cross, square: TargetSquare):
         self.cross = cross
         self.square = square
         cross_edges = set(cross.edges.values())
@@ -174,3 +174,5 @@ class CrossPlusSquare(Structure):
             self.opposing_edges._make_remaining()
         if self.outgoing_edges._n_alive() == 1 and self.square.target == 1:
             self.opposing_edges._kill_remaining()
+        if self.outgoing_edges._n_dead() == 2 and self.square.target == 3:
+            self.common_edges._make_remaining()
