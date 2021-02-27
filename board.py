@@ -18,7 +18,7 @@ class Board:
     def _initialize(self):
         self._initialize_points()
         self._initialize_edges()
-        self._initialize_structure_crosspoints()
+        self._initialize_structure_crosses()
         self._initialize_squares()
         self._initialize_crossplussquares()
 
@@ -52,14 +52,14 @@ class Board:
             cross_plus_square.update()
         self.print(True)
 
-    def _initialize_structure_crosspoints(self):
-        crosspoints = []
+    def _initialize_structure_crosses(self):
+        crosses = []
         for point in self.points:
             edges = self._get_edges_from_point(point)
             obj = Cross(edges)
-            crosspoints.append(obj)
+            crosses.append(obj)
 
-        self.crosses = crosspoints
+        self.crosses = crosses
 
     def _initialize_crossplussquares(self):
         cross_plus_square_list = []
