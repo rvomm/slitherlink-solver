@@ -228,17 +228,3 @@ class Board:
                     line = line + (vertical_edges[row_index][column_index+1].draw_v())
                 print(line)
 
-if __name__ == "__main__":
-    
-    b = Board()
-    for i in Board().points:
-        print(i)
-    print(Board()._point(1,1))
-    
-    for i in Board().edges:
-        print(i)
-
-    print("Edges from (1,2)")
-    for i in Board()._get_edges_from_point(1, 2):
-        print(i)
-
