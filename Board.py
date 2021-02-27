@@ -46,13 +46,13 @@ class Board:
     def solve_iteration(self):
         for cross in self.crosses:
             cross.update()
-        self.print(True)
+            self.print(True)
         for square in self.squares:
             square.update()
-        self.print(True)
+            self.print(True)
         for cross_plus_square in self.cross_plus_square_list:
             cross_plus_square.update()
-        self.print(True)
+            self.print(True)
 
     def _initialize_structure_crosspoints(self):
         crosspoints = []
@@ -194,15 +194,16 @@ class Board:
         dest = dest.pos()
         return source[0]-dest[0], source[1]-dest[1]
 
-    def print(self, with_line=False):
+    def print(self, with_line):
         """
         placeholder for a method that prints the current state of the board
         This method does nothing yet
         :return: a nice print (by default something has to be returned, so a None-value will be returned)
         """
+        if with_line == True:
+            print("------------------------------")
+
         # organize edges
-        if with_line:
-            print("-----------------")
         horizontal_edges = [[None]*self.ncol for i in range(self.nrow+1)]
         vertical_edges = [[None]*(self.ncol+1) for i in range(self.nrow)]
         for edge in self.edges:
