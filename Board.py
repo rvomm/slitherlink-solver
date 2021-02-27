@@ -42,9 +42,16 @@ class Board:
                     }
                     squares.append(StructureSquareWithTarget(constraint, edges))
         self.squares = squares
-    
+
+    def solve_iteration(self):
+        for cross in self.crosses:
+            cross.update()
+        for square in self.squares:
+            square.update()
+        for cross_plus_square in self.cross_plus_square_list:
+            cross_plus_square.update()
+
     def _initialize_structure_crosspoints(self):
-        
         crosspoints = []
         for point in self.points:
             edges = self._get_edges_from_point(point.row, point.col)
