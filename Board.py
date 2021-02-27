@@ -23,6 +23,7 @@ class Board:
         self._initialize_edges()
         self._initialize_structure_crosspoints()
         self._initialize_squares()
+        self._initialize_crossplussquares()
 
     def _initialize_squares(self):
         squares = []
@@ -51,7 +52,16 @@ class Board:
             obj = StructureCross(edges)
             crosspoints.append(obj)
 
-        self.structures = crosspoints
+        self.crosses = crosspoints
+
+    def _initialize_crossplussquares(self):
+        cross_plus_square_list = []
+        for cross in self.crosses:
+            for square in self.squares:
+                set_of_overlapping_edges = set(cross.edges).intersection(set(square.edges))
+                if len(set_of_overlapping_edges) > 1:
+                    cross_plus_square_list.append(CrossPlusSquare(cross, square))
+        self.cross_plus_square_list = cross_plus_square_list
 
     def _initialize_points(self):
         """
