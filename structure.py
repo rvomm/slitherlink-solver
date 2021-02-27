@@ -68,7 +68,7 @@ class EdgeSet(Structure):
         assert len(self.edges) <= 2
 
     def _edges(self):
-        pass
+        return self.edges
 
     def _update(self):
         pass
@@ -151,7 +151,7 @@ class StructureSquareWithTarget(Structure):
 class CrossPlusSquare(Structure):
     def __init__(self, cross: StructureCross, square: StructureSquareWithTarget):
         self.cross = cross
-        self.cross = square
+        self.square = square
         cross_edges = set(cross.edges.values())
         square_edges = set(square.edges.values())
         self.opposing_edges = EdgeSet(square_edges-cross_edges)

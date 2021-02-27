@@ -57,7 +57,7 @@ class Board:
         cross_plus_square_list = []
         for cross in self.crosses:
             for square in self.squares:
-                set_of_overlapping_edges = set(cross.edges).intersection(set(square.edges))
+                set_of_overlapping_edges = set(cross.edges.values()).intersection(set(square.edges.values()))
                 if len(set_of_overlapping_edges) > 1:
                     cross_plus_square_list.append(CrossPlusSquare(cross, square))
         self.cross_plus_square_list = cross_plus_square_list
