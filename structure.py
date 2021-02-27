@@ -183,4 +183,40 @@ class CrossPlusSquare(Structure):
             if self.outgoing_edges._n_dead() == 2:
                 self.common_edges._make_remaining()
         
+class AdjacentThrees(Structure):
+
+    def __init__(self, square1, square2, cross1, cross2):
         
+        super().__init__()
+        self.square1 = set(square1.edges.values())
+        self.square2 = set(square2.edges.values())
+        self.cross1 = set(cross1.edges.values())
+        self.cross2 = set(cross2.edges.values())
+        
+    def _edges(self):
+        pass 
+
+    def _update(self):
+
+        self._make_square_mid()
+        self._make_square_opposites()
+        self._kill_cross_outliers()
+        self._set_complete()
+    
+    def _set_complete(self):
+        self.is_complete = True
+
+    def _make_square_mid(self):
+        self.square1.intersection(self.square2).pop().make()
+
+    def _make_square_opposites(self):
+        
+        cross_edges = self.cross1.union(self.cross2)
+        self.square1.difference(cross_edges).pop().make()
+        self.square2.difference(cross_edges).pop().make()
+
+    def _kill_cross_outliers(self): 
+
+        square_edges = self.square1.union(self.square2)
+        self.cross1.difference(square_edges).pop().kill()
+        self.cross2.difference(square_edges).pop().kill()
