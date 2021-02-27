@@ -1,7 +1,8 @@
 import game 
+import os.path
 
 if __name__ == "__main__":
-    level = "test1.txt"
+    level = os.path.join("levels", "testing_0001.txt")
     _board = game.Game(level).board
     
     new_unknown_count = _board.unknonw_edge_count()
