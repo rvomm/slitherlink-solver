@@ -2,6 +2,8 @@
 from abc import ABC, abstractclassmethod
 import edge 
 import point
+from crosspoint import StructureCross
+from square import StructureSquareWithTarget
 
 class Structure(ABC):
     """
@@ -58,3 +60,36 @@ class Structure(ABC):
         return(sum(is_unknown))
 
 
+class CrossPlusSquare(Structure):
+    def __init__(self, cross: StructureCross, square: StructureSquareWithTarget):
+        self.cross = cross
+        self.cross = square
+        cross_edges = set(cross.edges)
+        square_edges = set(square.edges)
+        self.opposing_edges = EdgeSet(square_edges-cross_edges)
+        self.common_edges = EdgeSet(cross_edges.intersection(square_edges))
+        self.outgoing_edges = EdgeSet(cross_edges-square_edges)
+
+    def get_opposing_edges(self):
+        return self.opposing_edges
+
+    def get_common_edges(self):
+        return self.common_edges
+
+    def get_outgoing_edges(self):
+        return self.outgoing_edges
+
+    def update(self):
+        if self.outgoing_edges._n_alive() == 1 and self.square.target == 3:
+            self.opposing_edges._make_remaining()
+        if self.outgoing_edges._n_alive() == 1 and self.square.target == 1:
+            self.opposing_edges._kill_remaining()
+
+class EdgeSet(Structure):
+    def __init__(self, edges):
+        """
+        :param edges: list or set of edge objects
+        """
+        self.edges = edges
+        # for testing purposes
+        assert len(set.edges) <= 2
