@@ -63,7 +63,15 @@ class EdgeSet(Structure):
         """
         self.edges = edges
         # for testing purposes
-        assert len(set.edges) <= 2
+        if len(self.edges) > 2:
+            print("breakpoint")
+        assert len(self.edges) <= 2
+
+    def _edges(self):
+        pass
+
+    def _update(self):
+        pass
 
 
 class StructureCross(Structure):
@@ -149,6 +157,12 @@ class CrossPlusSquare(Structure):
         self.opposing_edges = EdgeSet(square_edges-cross_edges)
         self.common_edges = EdgeSet(cross_edges.intersection(square_edges))
         self.outgoing_edges = EdgeSet(cross_edges-square_edges)
+
+    def _edges(self):
+        return []
+
+    def _update(self):
+        pass
 
     def get_opposing_edges(self):
         return self.opposing_edges
