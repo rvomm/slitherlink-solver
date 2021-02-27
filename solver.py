@@ -9,7 +9,7 @@ if __name__ == "__main__":
         old_unknown_count = new_unknown_count
         _board.solve_iteration()
         new_unknown_count = _board.unknonw_edge_count()
-    _board.print()
+    _board.print(True)
 
 
     
