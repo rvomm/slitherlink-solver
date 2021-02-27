@@ -87,7 +87,7 @@ class Board:
                 )
         self.points = points
 
-    def _point(self, row, col):
+    def _point(self, row: int, col: int) -> Point:
         """
         Return a Point object from self.points given row and column.
 
