@@ -152,8 +152,8 @@ class CrossPlusSquare(Structure):
     def __init__(self, cross: StructureCross, square: StructureSquareWithTarget):
         self.cross = cross
         self.cross = square
-        cross_edges = set(cross.edges)
-        square_edges = set(square.edges)
+        cross_edges = set(cross.edges.values())
+        square_edges = set(square.edges.values())
         self.opposing_edges = EdgeSet(square_edges-cross_edges)
         self.common_edges = EdgeSet(cross_edges.intersection(square_edges))
         self.outgoing_edges = EdgeSet(cross_edges-square_edges)
