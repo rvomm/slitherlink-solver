@@ -30,21 +30,27 @@ def levels_equal(table_a, table_b):
                 return False
     return True
 
+def test_shape(table):
+    row_length = len(table[0])
+    for index, row in enumerate(table):
+        if len(row) != row_length:
+            print("row with index ", index, " is not of same lenght as first row")
+            return False
+    return True
+
 if __name__ == "__main__":
-    table = [[None, None, 3, 2],
-             [None, 0, None, None],
-             [3, 3, None, 2],
-             [None, None, 2, 2]]
-    save_level([table])
-    level_list = load_level_list()
-    print(level_list[0])
-    table2 = [[2, None, 1, 1, None, 2, None],
-             [None, 3, None, None, 1, None, 1],
-             [3, 2, None, None, None, None, None],
-             [None, 1, 2, 2, 1, 2, None],
-             [3, 2, None, 2, 1, None, 2],
-             [None, None, 2, None, 1, 2, 3],
-             [3, 2, None, None, 2, 2, None]]
-    append_level(table2)
-    level_list = load_level_list()
-    print(level_list[1])
+    table = [[None, 3, 1, None, None, None, 3],
+              [None, 3, None, None, 2, 2, None],
+              [3, None, 1, 2, 1, 0, 3],
+              [None, None, None, None, None, None, None],
+              [None, None, None, 2, None, None, 3],
+              [None, None, 2, 3, None, 3, None],
+              [3, None, 3, None, 2, 2, None]
+              ]
+    shape_bool = test_shape(table)
+    print("right shape:"+str(shape_bool))
+    if shape_bool:
+        append_level(table)
+        level_list = load_level_list()
+        print(level_list[-1])
+        print("length of level_list =", len(level_list))
