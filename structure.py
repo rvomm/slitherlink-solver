@@ -62,10 +62,6 @@ class EdgeSet(Structure):
         :param edges: list or set of edge objects
         """
         self.edges = edges
-        # for testing purposes
-        if len(self.edges) > 2:
-            print("breakpoint")
-        assert len(self.edges) <= 2
 
     def _edges(self):
         return self.edges
