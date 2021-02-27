@@ -5,13 +5,11 @@ from structure import CrossPlusSquare, Cross, TargetSquare
 
 class Board:
 
-    def __init__(self, constraints=None):
+    def __init__(self, constraints):
         """
 
         :param constraints: rectangular list of digits. None means no digit in the corresponding square
         """
-        if constraints is None:
-            constraints = [[1, None, 3], [None, 2, None]]
         self.constraints = constraints
         self.nrow = len(constraints)
         self.ncol = len(constraints[0])
