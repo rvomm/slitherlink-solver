@@ -146,6 +146,8 @@ class TargetSquare(Structure):
 
 class CrossPlusSquare(Structure):
     def __init__(self, cross: Cross, square: TargetSquare):
+
+        super().__init__()
         self.cross = cross
         self.square = square
         cross_edges = set(cross.edges.values())
@@ -155,10 +157,10 @@ class CrossPlusSquare(Structure):
         self.outgoing_edges = EdgeSet(cross_edges-square_edges)
 
     def _edges(self):
-        return []
-
-    def _update(self):
-        pass
+        cross_edges = list(self.cross.edges.values())
+        square_edges = list(self.square.edges.values())
+        total = cross_edges + square_edges
+        return total
 
     def get_opposing_edges(self):
         return self.opposing_edges
@@ -169,10 +171,16 @@ class CrossPlusSquare(Structure):
     def get_outgoing_edges(self):
         return self.outgoing_edges
 
-    def update(self):
-        if self.outgoing_edges._n_alive() == 1 and self.square.target == 3:
-            self.opposing_edges._make_remaining()
-        if self.outgoing_edges._n_alive() == 1 and self.outgoing_edges._n_dead() == 1 and self.square.target == 1:
-            self.opposing_edges._kill_remaining()
-        if self.outgoing_edges._n_dead() == 2 and self.square.target == 3:
-            self.common_edges._make_remaining()
+    def _update(self):
+        if self.square.target == 1:
+            if self.outgoing_edges._n_alive() == 1 and self.outgoing_edges._n_dead() == 1:
+                self.opposing_edges._kill_remaining()
+        
+        if self.square.target == 3: 
+            if self.outgoing_edges._n_alive() == 1:
+                self.opposing_edges._make_remaining()
+                self.outgoing_edges._kill_remaining()
+            if self.outgoing_edges._n_dead() == 2:
+                self.common_edges._make_remaining()
+        
+        
