@@ -100,7 +100,7 @@ class Board:
             return self._void_point(row, col)
 
 
-    def _edge(self, source, dest):
+    def _edge(self, source: Point, dest: Point) -> Edge:
         """
         Return an Edge object from self.edges given source and 
         destination. 
