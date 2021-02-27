@@ -1,13 +1,13 @@
 
 
-import Board
+import board
 import re
 
 class Game: 
     
     def __init__(self, path):
         self.path = path
-        self.board = Board.Board(self._constraints())
+        self.board = board.Board(self._constraints())
 
     def _constraints(self):
 
