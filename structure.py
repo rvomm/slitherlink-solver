@@ -172,7 +172,7 @@ class CrossPlusSquare(Structure):
     def update(self):
         if self.outgoing_edges._n_alive() == 1 and self.square.target == 3:
             self.opposing_edges._make_remaining()
-        if self.outgoing_edges._n_alive() == 1 and self.square.target == 1:
+        if self.outgoing_edges._n_alive() == 1 and self.outgoing_edges._n_dead() == 1 and self.square.target == 1:
             self.opposing_edges._kill_remaining()
         if self.outgoing_edges._n_dead() == 2 and self.square.target == 3:
             self.common_edges._make_remaining()
