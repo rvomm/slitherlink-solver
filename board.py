@@ -44,13 +44,13 @@ class Board:
     def solve_iteration(self):
         for cross in self.crosses:
             cross.update()
-            self.print(True)
+        self.print(True)
         for square in self.squares:
             square.update()
-            self.print(True)
+        self.print(True)
         for cross_plus_square in self.cross_plus_square_list:
             cross_plus_square.update()
-            self.print(True)
+        self.print(True)
 
     def _initialize_structure_crosspoints(self):
         crosspoints = []
