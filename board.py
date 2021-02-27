@@ -1,7 +1,7 @@
 
 from point import Point
 from edge import Edge
-from structure import CrossPlusSquare, Cross, TargetSquare
+from structure import CrossPlusSquare, Cross, TargetSquare, AdjacentThrees
 
 class Board:
 
@@ -21,6 +21,27 @@ class Board:
         self._initialize_crosses()
         self._initialize_squares()
         self._initialize_crossplussquares()
+        self._initialize_adjacentthrees()
+    
+
+    def _initialize_adjacentthrees(self):
+        adjacent_threes = []
+        threes = [square for square in self.squares if square.target == 3]
+
+        for square1 in threes:
+            for square2 in threes: 
+                set1 = set(square1.edges.values())
+                set2 = set(square2.edges.values())
+
+                edges_overlapping = set1.intersection(set2)
+
+                if len(edges_overlapping) == 1:
+                    edge_common = edges_overlapping.pop()
+                    crosses = [cross for cross in self.crosses if len(set(cross.edges.values()).intersection(set([edge_common]))) > 0]
+                    struc = AdjacentThrees(square1, square2, crosses[0], crosses[1])
+                    adjacent_threes.append(struc)
+
+        self.adjacent_threes = adjacent_threes
 
     def _initialize_squares(self):
         squares = []
@@ -50,6 +71,10 @@ class Board:
         self.print(True)
         for cross_plus_square in self.cross_plus_square_list:
             cross_plus_square.update()
+        self.print(True)
+
+        for adj_three in self.adjacent_threes:
+            adj_three.update()
         self.print(True)
 
     def _initialize_crosses(self):
