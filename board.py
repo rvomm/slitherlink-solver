@@ -157,13 +157,10 @@ class Board:
     def solve_iteration(self):
         for cross in self.crosses:
             cross.solve()
-        self.print(True)
         for square in self.squares:
             square.solve()
-        self.print(True)
         for cross_plus_square in self.cross_plus_squares:
             cross_plus_square.solve()
-        self.print(True)
 
         for adjacent_three_three in self.adjacent_three_threes:
             adjacent_three_three.solve()
@@ -175,9 +172,10 @@ class Board:
         for square_two_uniqueness_constraint in self.square_two_uniqueness_constraints:
             square_two_uniqueness_constraint.solve()
         self.print(True)
+        self.point_group_update()
 
     def point_group_update(self):
-        # update bookkeeping
+        # update self.pointgroups based on edge.recently_changed (with edge in self.edges)
         for edge in self.edges:
             if edge.recently_changed:
                 if edge.is_alive():
@@ -197,11 +195,17 @@ class Board:
                             index_list.sort()
                             pointgroup_b = self.pointgroups.pop(index_list[1])
                             pointgroup_a = self.pointgroups.pop(index_list[0])
-                            self.pointgroups(pointgroup_a+pointgroup_b)
+                            self.pointgroups.append(pointgroup_a+pointgroup_b)
                 edge.change_is_processed()
-
+        for group in self.pointgroups:
+            print(group)
         # check whether edges can be killed
-        pass
+        for edge in self.edges:
+            if edge.is_unknown():
+                point_list = [edge.dest, edge.source]
+                index_list = [self.index_of_pointgroup(point) for point in point_list]
+                if index_list[0] is not None and index_list[0] == index_list[1]:
+                    edge.kill()
 
     def index_of_pointgroup(self, point: Point):
         for index, group in enumerate(self.pointgroups):
