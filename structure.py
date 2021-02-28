@@ -240,3 +240,34 @@ class AdjacentOneThree(Structure):
 
     def _make_square3_edge_(self, cross): 
         self.square3.difference(self.square1).intersection(cross).pop().make()
+
+
+class SquareTwoUniquenessContraint(Structure):
+
+    def __init__(self, square: TargetSquare, crosses: list):
+        super().__init__()
+        self.square = square.edges
+        self.crosses = [cross.edges for cross in crosses]
+    
+    def edge_set(self):
+        return EdgeSet(self.square)
+        
+    def _try_solve(self): 
+        for cross in self.crosses:
+            if self._cross_edges_outgoing(cross).n_dead() == 2:
+                opposite = self._cross_opposite(cross)
+                if self._cross_edges_outgoing(opposite).n_unknown() == 2:
+                    self._cross_edges_common(cross).make_remaining()
+                    self._cross_edges_outgoing(opposite).kill_remaining()
+
+    def _cross_opposite(self, cross):
+        opposite = [cross2 for cross2 in self.crosses if len(cross2.intersection(cross)) == 0]
+        return opposite.pop()
+
+    def _cross_edges_outgoing(self, cross): 
+        edges = cross.difference(self.square)
+        return EdgeSet(edges)
+
+    def _cross_edges_common(self, cross): 
+        edges = cross.intersection(self.square)
+        return EdgeSet(edges)
