@@ -145,8 +145,7 @@ class Board:
 
         for two in twos:
 
-            adjacent = [square for square in self.squares if len(square.edges.intersection(two.edges)) == 2]
-
+            adjacent = [square for square in self.squares if len(square.edges.intersection(two.edges)) == 1]
             if (len(adjacent) == 0):
                 crosses = [cross for cross in self.crosses if len(cross.edges.intersection(two.edges)) > 0]
                 struc = SquareTwoUniquenessContraint(two, crosses)
@@ -174,7 +173,7 @@ class Board:
 
         for square_two_uniqueness_constraint in self.square_two_uniqueness_constraints:
             square_two_uniqueness_constraint.solve()
-            
+
         self.print(True)
 
     def _initialize_crosses(self):
