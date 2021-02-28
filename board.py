@@ -14,6 +14,7 @@ class Board:
         self.nrow = len(constraints)
         self.ncol = len(constraints[0])
         self._initialize()
+        self.pointgroups = []
 
     def _initialize(self):
         self._initialize_points()
@@ -173,8 +174,41 @@ class Board:
 
         for square_two_uniqueness_constraint in self.square_two_uniqueness_constraints:
             square_two_uniqueness_constraint.solve()
-
         self.print(True)
+
+    def point_group_update(self):
+        # update bookkeeping
+        for edge in self.edges:
+            if edge.recently_changed:
+                if edge.is_alive():
+                    point_list = [edge.dest, edge.source]
+                    index_list = [self.index_of_pointgroup(point) for point in point_list]
+                    nr_of_nones = index_list.count(None)
+                    if nr_of_nones == 1:
+                        group_index = [el for el in index_list if el is not None][0]
+                        new_point = point_list[index_list.index(None)]
+                        self.pointgroups[group_index].append(new_point)
+                    if nr_of_nones == 2:
+                        self.pointgroups.append(point_list)
+                    if nr_of_nones == 0:
+                        if index_list[0] == index_list[1]:
+                            print("level solved")
+                        else:
+                            index_list.sort()
+                            pointgroup_b = self.pointgroups.pop(index_list[1])
+                            pointgroup_a = self.pointgroups.pop(index_list[0])
+                            self.pointgroups(pointgroup_a+pointgroup_b)
+                edge.change_is_processed()
+
+        # check whether edges can be killed
+        pass
+
+    def index_of_pointgroup(self, point: Point):
+        for index, group in enumerate(self.pointgroups):
+            if point in group:
+                return index
+        return None
+
 
     def _initialize_crosses(self):
         crosses = []

@@ -6,22 +6,25 @@ class Edge:
         self.source = source
         self.dest = dest
         self.status = "unknown"
-        self.changed = False
+        self.recently_changed = False
 
     def __repr__(self):
         return f"Edge: {self.source.__repr__()} -> {self.dest.__repr__()} ({self.status})" 
  
     def reset(self):
         self.status = "unknown"
-        self.changed = False
+        self.recently_changed = False
 
     def make(self):
         self.status = "alive"
-        self.changed = True
+        self.recently_changed = True
 
     def kill(self):
         self.status = "dead"
-        self.changed = True
+        self.recently_changed = True
+
+    def change_is_processed(self):
+        self.recently_changed = False
  
     def is_unknown(self):
         return (self.status == "unknown")
