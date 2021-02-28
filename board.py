@@ -1,7 +1,7 @@
 
 from point import Point
 from edge import Edge
-from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree
+from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree, AdjacentOneOne, AdjacentOneThree
 
 class Board:
 
@@ -21,7 +21,10 @@ class Board:
         self._initialize_crosses()
         self._initialize_squares()
         self._initialize_cross_plus_squares()
+        self._initialize_adjacent_one_ones()
+        self._initialize_adjacent_one_threes()
         self._initialize_adjacent_three_threes()
+        
     
     def _initialize_points(self):
         """
@@ -84,6 +87,39 @@ class Board:
 
         self.adjacent_three_threes = adjacent_three_threes
 
+    def _initialize_adjacent_one_ones(self):
+        
+        adjacent_one_ones = []
+        ones = [square for square in self.squares if square.target == 1]
+        for square1 in ones:
+            for square2 in ones:
+
+                edges_common = square1.edges.intersection(square2.edges)
+
+                if len(edges_common) == 1:
+                    crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
+                    struc = AdjacentOneOne(square1, square2, crosses[0], crosses[1])
+                    adjacent_one_ones.append(struc)
+
+        self.adjacent_one_ones = adjacent_one_ones
+
+    def _initialize_adjacent_one_threes(self):
+        
+        adjacent_one_threes = []
+        ones = [square for square in self.squares if square.target == 1]
+        threes = [square for square in self.squares if square.target == 3]
+        for square1 in ones:
+            for square3 in threes:
+
+                edges_common = square1.edges.intersection(square3.edges)
+
+                if len(edges_common) == 1:
+                    crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
+                    struc = AdjacentOneThree(square1, square3, crosses[0], crosses[1])
+                    adjacent_one_threes.append(struc)
+
+        self.adjacent_one_threes = adjacent_one_threes
+
     def _initialize_squares(self):
         squares = []
         for row_index, constraint_row in enumerate(self.constraints):
@@ -114,6 +150,10 @@ class Board:
 
         for adjacent_three_three in self.adjacent_three_threes:
             adjacent_three_three.solve()
+        for adjacent_one_one in self.adjacent_one_threes:
+            adjacent_one_one.solve()
+        for adjacent_one_one in self.adjacent_one_ones:
+            adjacent_one_one.solve()
         self.print(True)
 
     def _initialize_crosses(self):
