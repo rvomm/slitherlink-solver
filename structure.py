@@ -120,13 +120,6 @@ class TargetSquare(Structure):
         self.target = target
         self.edges = edges
 
-    def __repr__(self):
-        out = ""
-        for key, value in self.edges.items():
-            out = out + key + " : " + value.draw_h() + "\n"
-
-        return out
-
     def _edges(self):
         return self.edges.values()
 
