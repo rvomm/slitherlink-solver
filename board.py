@@ -23,6 +23,50 @@ class Board:
         self._initialize_crossplussquares()
         self._initialize_adjacentthrees()
     
+    def _initialize_points(self):
+        """
+        The full set of points is the union of all corners of each 
+        of the cells.
+
+        Also fictional void point outside the grid are generated (not stored) to handle boundary conditions of the board
+        """
+        points = []
+        for row in range(0, self.nrow + 1):
+            for col in range(0, self.ncol + 1):
+                points.append(
+                    Point(row=row, col=col)
+                )
+        self.points = points
+
+    
+    def _initialize_edges(self):
+        """
+        For each point, create an edge from the point to the
+        point on the right and an edge to the point downwards. Skipping
+        rightward edge creation for points on the most right column and
+        skipping downward edge creation for bottom row.
+        """
+
+        self.edges = []
+        for row in range(self.nrow+1):
+            for col in range(self.ncol+1):
+                self._initialize_edge(row, col)
+    
+    def _initialize_edge(self, row, col):
+
+        here = self._point(row, col)
+        # edge creation to right
+        if col < self.ncol:
+            down = self._point(row, col + 1)
+            self.edges.append(
+                Edge(source=here, dest=down)
+            )
+        # edge creation to bottom
+        if row < self.nrow:
+            right = self._point(row + 1, col)
+            self.edges.append(
+                Edge(source=here, dest=right)
+            )
 
     def _initialize_adjacentthrees(self):
         adjacent_threes = []
@@ -95,21 +139,7 @@ class Board:
                     cross_plus_square_list.append(CrossPlusSquare(cross, square))
         self.cross_plus_square_list = cross_plus_square_list
 
-    def _initialize_points(self):
-        """
-        The full set of points is the union of all corners of each 
-        of the cells.
-
-        Also fictional void point outside the grid are generated (not stored) to handle boundary conditions of the board
-        """
-        points = []
-        for row in range(0, self.nrow + 1):
-            for col in range(0, self.ncol + 1):
-                points.append(
-                    Point(row=row, col=col)
-                )
-        self.points = points
-
+    
     def _point(self, row: int, col: int) -> Point:
         """
         Return a Point object from self.points given row and column.
@@ -165,35 +195,6 @@ class Board:
         edge = Edge(source, dest)
         edge.kill()
         return edge
-
-    def _initialize_edges(self):
-        """
-        For each point, create an edge from the point to the
-        point on the right and an edge to the point downwards. Skipping
-        rightward edge creation for points on the most right column and
-        skipping downward edge creation for bottom row.
-        """
-
-        self.edges = []
-        for row in range(self.nrow+1):
-            for col in range(self.ncol+1):
-                self._initialize_edge(row, col)
-    
-    def _initialize_edge(self, row, col):
-
-        here = self._point(row, col)
-        # edge creation to right
-        if col < self.ncol:
-            down = self._point(row, col + 1)
-            self.edges.append(
-                Edge(source=here, dest=down)
-            )
-        # edge creation to bottom
-        if row < self.nrow:
-            right = self._point(row + 1, col)
-            self.edges.append(
-                Edge(source=here, dest=right)
-            )
 
     def _get_edges_from_point(self, point):
 
