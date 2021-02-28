@@ -205,7 +205,15 @@ class Board:
                 point_list = [edge.dest, edge.source]
                 index_list = [self.index_of_pointgroup(point) for point in point_list]
                 if index_list[0] is not None and index_list[0] == index_list[1]:
-                    edge.kill()
+                    # the very last edge of the puzzle should not be forbidden here
+                    if len(self.pointgroups) > 1:
+                        edge.kill()
+                    found_unmet_constraint = False
+                    for square in self.squares:
+                        if edge not in square.edges and not square._n_alive_equals_target():
+                            found_unmet_constraint = True
+                    if found_unmet_constraint:
+                        edge.kill()
 
     def index_of_pointgroup(self, point: Point):
         for index, group in enumerate(self.pointgroups):
