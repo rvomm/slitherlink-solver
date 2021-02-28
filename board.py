@@ -197,8 +197,6 @@ class Board:
                             pointgroup_a = self.pointgroups.pop(index_list[0])
                             self.pointgroups.append(pointgroup_a+pointgroup_b)
                 edge.change_is_processed()
-        for group in self.pointgroups:
-            print(group)
         # check whether edges can be killed
         for edge in self.edges:
             if edge.is_unknown():
