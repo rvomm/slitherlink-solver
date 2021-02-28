@@ -171,8 +171,8 @@ class Board:
 
         for square_two_uniqueness_constraint in self.square_two_uniqueness_constraints:
             square_two_uniqueness_constraint.solve()
-        self.print(True)
         self.point_group_update()
+        self.print(True)
 
     def point_group_update(self):
         # update self.pointgroups based on edge.recently_changed (with edge in self.edges)
