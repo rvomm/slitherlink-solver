@@ -12,62 +12,56 @@ class Structure(ABC):
     def __init__(self):
         self.is_complete = False
 
-    def update(self):
+    def solve(self):
         if not self.is_complete:
-            self._update() 
+            self._try_solve() 
             self._set_complete()
 
     def is_changed(self):
-        changed = [obj.changed for obj in self._edges()]
+        changed = [obj.changed for obj in self.edge_set().edges]
         return any(changed)
 
     @abstractclassmethod
-    def _update(self):
+    def _try_solve(self):
         pass
 
     @abstractclassmethod
-    def _edges(self):
+    def edge_set(self):
         pass
 
     def _set_complete(self):
-        is_known = [not obj.is_unknown() for obj in self._edges()]
+        is_known = [not edge.is_unknown() for edge in self.edge_set().edges]
         self.is_complete = all(is_known)
-    
-    def _kill_remaining(self):
-        for obj in self._edges():
-            if obj.is_unknown():
-                obj.kill()
-    
-    def _make_remaining(self):
-        for obj in self._edges():
-            if obj.is_unknown():
-                obj.make()
-
-    def _n_dead(self):
-        is_dead = [obj.is_dead() for obj in self._edges()]
-        return sum(is_dead)
-        
-    def _n_alive(self):
-        is_alive = [obj.is_alive() for obj in self._edges()]
-        return sum(is_alive)
-
-    def _n_unknown(self):
-        is_unknown = [obj.is_unknown() for obj in self._edges()]
-        return(sum(is_unknown))
 
 
-class EdgeSet(Structure):
-    def __init__(self, edges):
+class EdgeSet:
+    def __init__(self, edges: set):
         """
         :param edges: list or set of edge objects
         """
         self.edges = edges
 
-    def _edges(self):
-        return self.edges
+    def kill_remaining(self):
+        for edge in self.edges:
+            if edge.is_unknown():
+                edge.kill()
+    
+    def make_remaining(self):
+        for edge in self.edges:
+            if edge.is_unknown():
+                edge.make()
 
-    def _update(self):
-        pass
+    def n_dead(self):
+        is_dead = [edge.is_dead() for edge in self.edges]
+        return sum(is_dead)
+        
+    def n_alive(self):
+        is_alive = [edge.is_alive() for edge in self.edges]
+        return sum(is_alive)
+
+    def n_unknown(self):
+        is_unknown = [edge.is_unknown() for edge in self.edges]
+        return(sum(is_unknown))
 
 
 class Cross(Structure):
@@ -85,24 +79,17 @@ class Cross(Structure):
 
         self.edges = edges
 
-    def _update(self):
-        if self._n_alive() == 2:
-            self._kill_remaining()
-        elif self._n_unknown() == 1:
-            if self._n_alive() == 1:
-                self._make_remaining()
+    def _try_solve(self):
+        if self.edge_set().n_alive() == 2:
+            self.edge_set().kill_remaining()
+        elif self.edge_set().n_unknown() == 1: 
+            if self.edge_set().n_alive() == 1:
+                self.edge_set().make_remaining()
             else:
-                self._kill_remaining()
+                self.edge_set().kill_remaining()
 
-    def _edges(self):
-        return list(self.edges.values())
-
-    def __repr__(self):
-        res = ""
-        for key, value in self.edges.items():
-            res = res + key + " : " + value.draw_h() + ", "
-        return res
-
+    def edge_set(self):
+        return EdgeSet(self.edges)
 
 class TargetSquare(Structure):
     """
@@ -112,29 +99,28 @@ class TargetSquare(Structure):
     the cell.
     """
 
-    def __init__(self, target, edges):
+    def __init__(self, target: int, edges: set):
 
         super().__init__()
-
         self._n_max = 4
         self.target = target
         self.edges = edges
 
-    def _edges(self):
-        return self.edges.values()
+    def edge_set(self):
+        return EdgeSet(self.edges)
 
-    def _update(self):
+    def _try_solve(self):
         if (self._n_alive_equals_target()):
-            self._kill_remaining()
+            self.edge_set().kill_remaining()
 
         if (self._n_dead_equals_max_minus_target()):
-            self._make_remaining()
+            self.edge_set().make_remaining()
 
     def _n_alive_equals_target(self):
-        return (self._n_alive() == self.target)
+        return (self.edge_set().n_alive() == self.target)
 
     def _n_dead_equals_max_minus_target(self):
-        return (self._n_dead() == (self._n_max - self.target))
+        return (self.edge_set().n_dead() == (self._n_max - self.target))
 
 
 class CrossPlusSquare(Structure):
@@ -143,73 +129,68 @@ class CrossPlusSquare(Structure):
         super().__init__()
         self.cross = cross
         self.square = square
-        cross_edges = set(cross.edges.values())
-        square_edges = set(square.edges.values())
-        self.opposing_edges = EdgeSet(square_edges-cross_edges)
-        self.common_edges = EdgeSet(cross_edges.intersection(square_edges))
-        self.outgoing_edges = EdgeSet(cross_edges-square_edges)
 
-    def _edges(self):
-        cross_edges = list(self.cross.edges.values())
-        square_edges = list(self.square.edges.values())
-        total = cross_edges + square_edges
-        return total
+        self.edges_opposing = EdgeSet(square.edges - cross.edges)
+        self.edges_common = EdgeSet(cross.edges.intersection(square.edges))
+        self.edges_outgoing = EdgeSet(cross.edges - square.edges)
 
-    def get_opposing_edges(self):
-        return self.opposing_edges
+    def edge_set(self):
+        return EdgeSet(self.cross.edges.union(self.square.edges))
 
-    def get_common_edges(self):
-        return self.common_edges
-
-    def get_outgoing_edges(self):
-        return self.outgoing_edges
-
-    def _update(self):
+    def _try_solve(self):
         if self.square.target == 1:
-            if self.outgoing_edges._n_alive() == 1 and self.outgoing_edges._n_dead() == 1:
-                self.opposing_edges._kill_remaining()
+            if self._cross_is_incoming():
+                self.edges_opposing.kill_remaining()
+            
+            if self.edges_outgoing.n_dead() == 2:
+                self.edges_common.kill_remaining()
+
+        if self.square.target == 2:
+            if self._cross_is_incoming():
+                if self.edges_opposing.n_alive() == 1:
+                    self.edges_opposing.kill_remaining()
         
         if self.square.target == 3: 
-            if self.outgoing_edges._n_alive() == 1:
-                self.opposing_edges._make_remaining()
-                self.outgoing_edges._kill_remaining()
-            if self.outgoing_edges._n_dead() == 2:
-                self.common_edges._make_remaining()
+            if self.edges_outgoing.n_alive() == 1:
+                self.edges_opposing.make_remaining()
+                self.edges_outgoing.kill_remaining()
+            if self.edges_outgoing.n_dead() == 2:
+                self.edges_common.make_remaining()
+
+    def _cross_is_incoming(self):
+        """
+        Check if outgoing cross edges are linked to common edges.
+        """
+        return self.edges_outgoing.n_alive() == 1 and self.edges_outgoing.n_dead() == 1
         
-class AdjacentThrees(Structure):
+class AdjacentThreeThree(Structure):
 
     def __init__(self, square1, square2, cross1, cross2):
         
         super().__init__()
-        self.square1 = set(square1.edges.values())
-        self.square2 = set(square2.edges.values())
-        self.cross1 = set(cross1.edges.values())
-        self.cross2 = set(cross2.edges.values())
-        
-    def _edges(self):
-        pass 
 
-    def _update(self):
+        crosses = cross1.edges.union(cross2.edges)
+        squares = square1.edges.union(square2.edges)
+
+        self.total = EdgeSet(squares.union(crosses))
+        self.square_mid = EdgeSet(square1.edges.intersection(square2.edges))
+        self.square_opposites = EdgeSet(squares.difference(crosses))
+        self.square_outliers = EdgeSet(crosses.difference(squares))
+        
+    def edge_set(self):
+        return self.total
+
+    def _try_solve(self):
 
         self._make_square_mid()
         self._make_square_opposites()
-        self._kill_cross_outliers()
-        self._set_complete()
-    
-    def _set_complete(self):
-        self.is_complete = True
+        self._kill_square_outliers()
 
     def _make_square_mid(self):
-        self.square1.intersection(self.square2).pop().make()
+        self.square_mid.make_remaining()
 
     def _make_square_opposites(self):
-        
-        cross_edges = self.cross1.union(self.cross2)
-        self.square1.difference(cross_edges).pop().make()
-        self.square2.difference(cross_edges).pop().make()
+        self.square_opposites.make_remaining()
 
-    def _kill_cross_outliers(self): 
-
-        square_edges = self.square1.union(self.square2)
-        self.cross1.difference(square_edges).pop().kill()
-        self.cross2.difference(square_edges).pop().kill()
+    def _kill_square_outliers(self): 
+        self.square_outliers.kill_remaining()

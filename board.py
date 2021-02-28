@@ -1,7 +1,7 @@
 
 from point import Point
 from edge import Edge
-from structure import CrossPlusSquare, Cross, TargetSquare, AdjacentThrees
+from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree
 
 class Board:
 
@@ -20,8 +20,8 @@ class Board:
         self._initialize_edges()
         self._initialize_crosses()
         self._initialize_squares()
-        self._initialize_crossplussquares()
-        self._initialize_adjacentthrees()
+        self._initialize_cross_plus_squares()
+        self._initialize_adjacent_three_threes()
     
     def _initialize_points(self):
         """
@@ -68,24 +68,21 @@ class Board:
                 Edge(source=here, dest=right)
             )
 
-    def _initialize_adjacentthrees(self):
-        adjacent_threes = []
+    def _initialize_adjacent_three_threes(self):
+        
+        adjacent_three_threes = []
         threes = [square for square in self.squares if square.target == 3]
-
         for square1 in threes:
-            for square2 in threes: 
-                set1 = set(square1.edges.values())
-                set2 = set(square2.edges.values())
+            for square2 in threes:
 
-                edges_overlapping = set1.intersection(set2)
+                edges_common = square1.edges.intersection(square2.edges)
 
-                if len(edges_overlapping) == 1:
-                    edge_common = edges_overlapping.pop()
-                    crosses = [cross for cross in self.crosses if len(set(cross.edges.values()).intersection(set([edge_common]))) > 0]
-                    struc = AdjacentThrees(square1, square2, crosses[0], crosses[1])
-                    adjacent_threes.append(struc)
+                if len(edges_common) == 1:
+                    crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
+                    struc = AdjacentThreeThree(square1, square2, crosses[0], crosses[1])
+                    adjacent_three_threes.append(struc)
 
-        self.adjacent_threes = adjacent_threes
+        self.adjacent_three_threes = adjacent_three_threes
 
     def _initialize_squares(self):
         squares = []
@@ -98,46 +95,45 @@ class Board:
                     dr = self._point(row_index + 1, column_index + 1)
 
                     edges = {
-                        "u": self._edge(ul, ur),
-                        "d": self._edge(dl, dr),
-                        "r": self._edge(ur, dr),
-                        "l": self._edge(ul, dl)
+                        self._edge(ul, ur), self._edge(dl, dr),
+                        self._edge(ur, dr), self._edge(ul, dl)
                     }
                     squares.append(TargetSquare(constraint, edges))
         self.squares = squares
 
     def solve_iteration(self):
         for cross in self.crosses:
-            cross.update()
+            cross.solve()
         self.print(True)
         for square in self.squares:
-            square.update()
+            square.solve()
         self.print(True)
-        for cross_plus_square in self.cross_plus_square_list:
-            cross_plus_square.update()
+        for cross_plus_square in self.cross_plus_squares:
+            cross_plus_square.solve()
         self.print(True)
 
-        for adj_three in self.adjacent_threes:
-            adj_three.update()
+        for adjacent_three_three in self.adjacent_three_threes:
+            adjacent_three_three.solve()
         self.print(True)
 
     def _initialize_crosses(self):
         crosses = []
         for point in self.points:
             edges = self._get_edges_from_point(point)
-            obj = Cross(edges)
-            crosses.append(obj)
+            crosses.append(Cross(edges))
 
         self.crosses = crosses
 
-    def _initialize_crossplussquares(self):
-        cross_plus_square_list = []
+    def _initialize_cross_plus_squares(self):
+
+        cross_plus_squares = []
         for cross in self.crosses:
             for square in self.squares:
-                set_of_overlapping_edges = set(cross.edges.values()).intersection(set(square.edges.values()))
+                set_of_overlapping_edges = cross.edges.intersection(square.edges)
                 if len(set_of_overlapping_edges) > 1:
-                    cross_plus_square_list.append(CrossPlusSquare(cross, square))
-        self.cross_plus_square_list = cross_plus_square_list
+                    cross_plus_squares.append(CrossPlusSquare(cross, square))
+
+        self.cross_plus_squares = cross_plus_squares
 
     
     def _point(self, row: int, col: int) -> Point:
@@ -204,10 +200,8 @@ class Board:
         left = self._point(point.row, point.col - 1)
         
         edges = {
-            "u" : self._edge(point, up),
-            "d" : self._edge(point, down),
-            "r" : self._edge(point, right),
-            "l" : self._edge(point, left)
+            self._edge(point, up), self._edge(point, down),
+            self._edge(point, right), self._edge(point, left)
         }
         
         return edges
