@@ -149,6 +149,8 @@ class CrossPlusSquare(Structure):
             if self._cross_is_incoming():
                 if self.edges_opposing.n_alive() == 1:
                     self.edges_opposing.kill_remaining()
+                if self.edges_opposing.n_dead() == 1:
+                    self.edges_opposing.make_remaining()
         
         if self.square.target == 3: 
             if self.edges_outgoing.n_alive() == 1:
@@ -258,7 +260,7 @@ class SquareTwoUniquenessContraint(Structure):
                 opposite = self._cross_opposite(cross)
                 if self._cross_edges_outgoing(opposite).n_unknown() == 2:
                     self._cross_edges_common(cross).make_remaining()
-                    self._cross_edges_outgoing(opposite).kill_remaining()
+                    self._cross_edges_outgoing(opposite).make_remaining()
 
     def _cross_opposite(self, cross):
         opposite = [cross2 for cross2 in self.crosses if len(cross2.intersection(cross)) == 0]
