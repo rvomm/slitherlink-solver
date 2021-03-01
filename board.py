@@ -1,7 +1,7 @@
 
 from point import Point
 from edge import Edge
-from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree, AdjacentOneOne, AdjacentOneThree, SquareTwoUniquenessContraint
+from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree, AdjacentOneOne, AdjacentOneThree, CrossSquareCross
 
 class Board:
 
@@ -160,7 +160,7 @@ class Board:
                     ))
                     
                 cross_square_crosses.append(
-                    SquareTwoUniquenessContraint(square2, [cross1, cross2])
+                    CrossSquareCross(square2, [cross1, cross2])
                 )
 
         self.cross_square_crosses = cross_square_crosses        
