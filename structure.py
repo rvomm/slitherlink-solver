@@ -135,7 +135,7 @@ class CrossPlusSquare(Structure):
         """
         return self.edges_outgoing.n_alive() == 1 and self.edges_outgoing.n_dead() == 1
         
-class AdjacentOneOne(Structure):
+class AdjacentSquaresOneOne(Structure):
 
     def __init__(self, square1, square2, cross1, cross2):
         
@@ -155,7 +155,7 @@ class AdjacentOneOne(Structure):
         if (self.square_outliers.n_dead() > 0):
             self.square_mid.kill_remaining()
     
-class AdjacentThreeThree(Structure):
+class AdjacentSquaresThreeThree(Structure):
 
     def __init__(self, square1, square2, cross1, cross2):
         
@@ -187,7 +187,7 @@ class AdjacentThreeThree(Structure):
     def _kill_square_outliers(self): 
         self.square_outliers.kill_remaining()
 
-class AdjacentOneThree(Structure):
+class AdjacentSquaresOneThree(Structure):
     """
     A 1-square and an adjacent 3-square, accompanied by their two overlapping
     cross. 

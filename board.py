@@ -1,8 +1,9 @@
 
 from point import Point
 from edge import Edge
-from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree, \
-    AdjacentOneOne, AdjacentOneThree, CrossSquareCross, CrossSquareCrossNotAdjacent
+from structure import Cross, TargetSquare, CrossPlusSquare, \
+    AdjacentSquaresThreeThree, AdjacentSquaresOneOne, AdjacentSquaresOneThree, \
+        CrossSquareCross, CrossSquareCrossNotAdjacent
 
 class Board:
 
@@ -23,9 +24,9 @@ class Board:
         self._initialize_crosses()
         self._initialize_squares()
         self._initialize_cross_plus_squares()
-        self._initialize_adjacent_one_ones()
-        self._initialize_adjacent_one_threes()
-        self._initialize_adjacent_three_threes()
+        self._initialize_adjacent_squares_one_one()
+        self._initialize_adjacent_squares_one_three()
+        self._initialize_adjacent_squares_three_three()
         self._initialize_cross_square_crosses()
         self._initialize_cross_square_crosses_not_adjacent()
         
@@ -75,9 +76,9 @@ class Board:
                 Edge(source=here, dest=right)
             )
 
-    def _initialize_adjacent_three_threes(self):
+    def _initialize_adjacent_squares_three_three(self):
         
-        adjacent_three_threes = []
+        adjacent_squares = []
         threes = [square for square in self.squares if square.target == 3]
         for square1 in threes:
             for square2 in threes:
@@ -86,14 +87,14 @@ class Board:
 
                 if len(edges_common) == 1:
                     crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
-                    struc = AdjacentThreeThree(square1, square2, crosses[0], crosses[1])
-                    adjacent_three_threes.append(struc)
+                    struc = AdjacentSquaresThreeThree(square1, square2, crosses[0], crosses[1])
+                    adjacent_squares.append(struc)
 
-        self.adjacent_three_threes = adjacent_three_threes
+        self.adjacent_squares_three_three = adjacent_squares
 
-    def _initialize_adjacent_one_ones(self):
+    def _initialize_adjacent_squares_one_one(self):
         
-        adjacent_one_ones = []
+        adjacent_squares = []
         ones = [square for square in self.squares if square.target == 1]
         for square1 in ones:
             for square2 in ones:
@@ -102,14 +103,14 @@ class Board:
 
                 if len(edges_common) == 1:
                     crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
-                    struc = AdjacentOneOne(square1, square2, crosses[0], crosses[1])
-                    adjacent_one_ones.append(struc)
+                    struc = AdjacentSquaresOneOne(square1, square2, crosses[0], crosses[1])
+                    adjacent_squares.append(struc)
 
-        self.adjacent_one_ones = adjacent_one_ones
+        self.adjacent_squares_one_one = adjacent_squares
 
-    def _initialize_adjacent_one_threes(self):
+    def _initialize_adjacent_squares_one_three(self):
         
-        adjacent_one_threes = []
+        adjacent_squares = []
         ones = [square for square in self.squares if square.target == 1]
         threes = [square for square in self.squares if square.target == 3]
         for square1 in ones:
@@ -119,10 +120,10 @@ class Board:
 
                 if len(edges_common) == 1:
                     crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
-                    struc = AdjacentOneThree(square1, square3, crosses[0], crosses[1])
-                    adjacent_one_threes.append(struc)
+                    struc = AdjacentSquaresOneThree(square1, square3, crosses[0], crosses[1])
+                    adjacent_squares.append(struc)
 
-        self.adjacent_one_threes = adjacent_one_threes
+        self.adjacent_squares_one_three = adjacent_squares
 
     def _initialize_squares(self):
         squares = []
@@ -213,12 +214,12 @@ class Board:
         for cross_plus_square in self.cross_plus_squares:
             cross_plus_square.solve()
 
-        for adjacent_three_three in self.adjacent_three_threes:
-            adjacent_three_three.solve()
-        for adjacent_one_one in self.adjacent_one_threes:
-            adjacent_one_one.solve()
-        for adjacent_one_one in self.adjacent_one_ones:
-            adjacent_one_one.solve()
+        for adjacent_squares in self.adjacent_squares_three_three:
+            adjacent_squares.solve()
+        for adjacent_squares in self.adjacent_squares_one_three:
+            adjacent_squares.solve()
+        for adjacent_squares in self.adjacent_squares_one_one:
+            adjacent_squares.solve()
 
         for cross_square_cross in self.cross_square_crosses:
             cross_square_cross.solve()
