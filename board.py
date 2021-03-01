@@ -95,12 +95,13 @@ class Board:
 
     @staticmethod
     def _is_cross_next_to_square(cross: Cross, square: TargetSquare):
-        "Cross is next to square if they have two common edges."
+        "A cross is next to square if they have two common edges."
         edges = cross.edges.intersection(square.edges)
         return len(edges) == 2
     
     @staticmethod
     def _create_adjacent_squares(square1, square2, cross1, cross2):
+        "A 'factory' method for creating AdjacentSquaresXY objects"
         if square1.target == 1:
             if square2.target == 1:
                 return AdjacentSquaresOneOne(square1, square2, cross1)
@@ -113,6 +114,10 @@ class Board:
                 return AdjacentSquaresThreeThree(square1, square2, cross1, cross2)
 
     def _initialize_squares(self):
+        """
+        Initialize all squares on the board. Squares with no target in them 
+        do not carry any information, so they are omitted.  
+        """
         squares = []
         for row_index, constraint_row in enumerate(self.constraints):
             for column_index, constraint in enumerate(constraint_row):
@@ -170,12 +175,9 @@ class Board:
                 
                 crosses = [cross for cross in self.crosses if self._n_overlapping(cross.edges, square.edges) > 0]
 
-                # for each cross, find the diagonally opposite
+                # for each cross, find the diagonally opposite cross
                 for cross1 in crosses:
-                    cross2 = next(iter(
-                        [cross for cross in crosses if len(cross1.edges.intersection(cross.edges)) == 0]
-                    ))
-                    
+                    [cross2] = [cross for cross in crosses if len(cross1.edges.intersection(cross.edges)) == 0]                    
                     new = CrossSquareCrossNotAdjacent(square, cross1, cross2)
                     cross_square_crosses.append(new)
 
@@ -272,13 +274,12 @@ class Board:
         cross_plus_squares = []
         for cross in self.crosses:
             for square in self.squares:
-                set_of_overlapping_edges = cross.edges.intersection(square.edges)
-                if len(set_of_overlapping_edges) > 1:
-                    cross_plus_squares.append(CrossPlusSquare(cross, square))
+                if Board._is_cross_next_to_square(cross, square):
+                    new = CrossPlusSquare(cross, square)
+                    cross_plus_squares.append(new)
 
         self.cross_plus_squares = cross_plus_squares
 
-    
     def _point(self, row: int, col: int) -> Point:
         """
         Return a Point object from self.points given row and column.

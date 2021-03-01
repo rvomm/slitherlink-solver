@@ -164,7 +164,12 @@ class AdjacentSquaresOneOne(Structure):
         return EdgeSet(set([self._outlier_edge()]))
     
 class AdjacentSquaresThreeThree(Structure):
-
+    """
+    Two adjacent threes have a deterministic strategy which can be applied
+    immediately. The opposite edges and the mid-edge should always be alive. 
+    As a bonus, the outliers of the two crosses shared by the squares 
+    should always be dead.
+    """
     def __init__(self, square1, square2, cross1, cross2):
         
         super().__init__()
@@ -174,22 +179,25 @@ class AdjacentSquaresThreeThree(Structure):
         self.cross2 = cross2
         
     def edge_set(self):
-        return EdgeSet(self._mid_edges())
+        return self._mid_edgeset()
 
     def _try_solve(self):
 
-        EdgeSet(self._outlier_edges()).kill_remaining()
-        EdgeSet(self._opposite_edges()).make_remaining()
-        EdgeSet(self._mid_edges()).make_remaining()
+        self._outlier_edgeset().kill_remaining()
+        self._opposite_edgeset().make_remaining()
+        self._mid_edgeset().make_remaining()
 
-    def _outlier_edges(self):
-        return self._cross_edges().difference(self._square_edges())
-    
-    def _opposite_edges(self):
-        return self._square_edges().difference(self._cross_edges())
-    
-    def _mid_edges(self):
-        return self.square1.edges.intersection(self.square2.edges)
+    def _outlier_edgeset(self):
+        edges = self._cross_edges().difference(self._square_edges())
+        return EdgeSet(edges)
+
+    def _opposite_edgeset(self):
+        edges = self._square_edges().difference(self._cross_edges())
+        return EdgeSet(edges)
+
+    def _mid_edgeset(self):
+        edges = self.square1.edges.intersection(self.square2.edges)
+        return EdgeSet(edges)
 
     def _cross_edges(self):
         return self.cross1.edges.union(self.cross2.edges)
