@@ -25,7 +25,7 @@ class Board:
         self._initialize_adjacent_one_ones()
         self._initialize_adjacent_one_threes()
         self._initialize_adjacent_three_threes()
-        self._initialize_square_two_uniqueness_constraints()
+        self._initialize_cross_square_crosses()
         
     
     def _initialize_points(self):
@@ -139,20 +139,31 @@ class Board:
                     squares.append(TargetSquare(constraint, edges))
         self.squares = squares
 
-    def _initialize_square_two_uniqueness_constraints(self):
+    def _initialize_cross_square_crosses(self):
+        """
+        Only for squares with target 2, we need to create a structure with the square
+        and diagonal crosses. By considering ordered pairs, there are four different 
+        combinations per square.  
+        """
+        cross_square_crosses = []
+        square2s = [square for square in self.squares if square.target == 2]
 
-        square_two_uniqueness_constraints = []
-        twos = [square for square in self.squares if square.target == 2]
+        for square2 in square2s:
 
-        for two in twos:
-
-            adjacent = [square for square in self.squares if len(square.edges.intersection(two.edges)) == 1]
+            adjacent = [square for square in self.squares if len(square.edges.intersection(square2.edges)) == 1]
             if (len(adjacent) == 0):
-                crosses = [cross for cross in self.crosses if len(cross.edges.intersection(two.edges)) > 0]
-                struc = SquareTwoUniquenessContraint(two, crosses)
-                square_two_uniqueness_constraints.append(struc)
 
-        self.square_two_uniqueness_constraints = square_two_uniqueness_constraints        
+                crosses = [cross for cross in self.crosses if len(cross.edges.intersection(square2.edges)) > 0]
+                for cross1 in crosses:
+                    cross2 = next(iter(
+                        [cross for cross in crosses if len(cross1.edges.intersection(cross.edges)) == 0]
+                    ))
+                    
+                cross_square_crosses.append(
+                    SquareTwoUniquenessContraint(square2, [cross1, cross2])
+                )
+
+        self.cross_square_crosses = cross_square_crosses        
 
     def solve_iteration(self):
         for cross in self.crosses:
@@ -169,8 +180,8 @@ class Board:
         for adjacent_one_one in self.adjacent_one_ones:
             adjacent_one_one.solve()
 
-        for square_two_uniqueness_constraint in self.square_two_uniqueness_constraints:
-            square_two_uniqueness_constraint.solve()
+        for cross_square_cross in self.cross_square_crosses:
+            cross_square_cross.solve()
         self.point_group_update()
         self.print(True)
 
