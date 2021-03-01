@@ -349,12 +349,14 @@ class Board:
         
         return edges
 
-    @staticmethod
-    def delta_point(source, dest):
-        source = source.pos()
-        dest = dest.pos()
-        return source[0]-dest[0], source[1]-dest[1]
+    def print(self, with_line):
+        BoardPrinter(self).print(with_line)
 
+class BoardPrinter: 
+
+    def __init__(self, board):
+        self.board = board                
+    
     def print(self, with_line):
         """
         placeholder for a method that prints the current state of the board
@@ -362,32 +364,39 @@ class Board:
         :return: a nice print (by default something has to be returned, so a None-value will be returned)
         """
         if with_line == True:
-            print("------------------------------")
+            print("-----------------------------------------------")
 
         # organize edges
-        horizontal_edges = [[None]*self.ncol for i in range(self.nrow+1)]
-        vertical_edges = [[None]*(self.ncol+1) for i in range(self.nrow)]
-        for edge in self.edges:
-            delta_row, delta_col = Board.delta_point(edge.source, edge.dest)
+        horizontal_edges = [[None]*self.board.ncol for i in range(self.board.nrow+1)]
+        vertical_edges = [[None]*(self.board.ncol+1) for i in range(self.board.nrow)]
+        for edge in self.board.edges:
+            delta_row, delta_col = BoardPrinter.delta_point(edge.source, edge.dest)
             source = edge.source.pos()
             if delta_col == 0:
                 vertical_edges[source[0]][source[1]] = edge
             else:  # if delta_row == 0:
                 horizontal_edges[source[0]][source[1]] = edge
         # print edges
-        for i in range(2*self.nrow + 1):
+        for i in range(2*self.board.nrow + 1):
             if i % 2 == 0:
                 row_index = int(i/2)
                 line = "+"
-                for column_index in range(self.ncol):
+                for column_index in range(self.board.ncol):
                     line = line + (horizontal_edges[row_index][column_index].draw_h()) + "+"
                 print(line)
             else:
                 row_index = int((i-1)/2)
                 line = vertical_edges[row_index][0].draw_v()
-                for column_index in range(self.ncol):
-                    digit = self.constraints[row_index][column_index]
+                for column_index in range(self.board.ncol):
+                    digit = self.board.constraints[row_index][column_index]
                     line = line + " " + (str(digit) if digit is not None else " ") + " "
                     line = line + (vertical_edges[row_index][column_index+1].draw_v())
                 print(line)
 
+    @staticmethod
+    def delta_point(source: Point, dest: Point):
+        source = source.pos()
+        dest = dest.pos()
+        return source[0]-dest[0], source[1]-dest[1]
+
+    
