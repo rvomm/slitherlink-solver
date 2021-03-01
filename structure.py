@@ -199,9 +199,9 @@ class AdjacentOneThree(Structure):
         
         super().__init__()
 
-        self.crosses = [cross1.edges, cross2.edges]
-        self.square1 = square1.edges
-        self.square3 = square3.edges
+        self.crosses = [cross1, cross2]
+        self.square1 = square1
+        self.square3 = square3
 
     def edge_set(self):
         edges = set([self._cross_outlier(cross) for cross in self.crosses])
@@ -214,10 +214,12 @@ class AdjacentOneThree(Structure):
                 self._make_square3_edge_(cross)
         
     def _cross_outlier(self, cross):
-        return cross.difference(self.square1).difference(self.square3).pop()
+        edges = cross.edges.difference(self.square1.edges).difference(self.square3.edges)
+        return next(iter(edges))
 
     def _make_square3_edge_(self, cross): 
-        self.square3.difference(self.square1).intersection(cross).pop().make()
+        [edge] = self.square3.edges.difference(self.square1.edges).intersection(cross.edges)
+        edge.make()
 
 
 class CrossSquareCross(Structure):
