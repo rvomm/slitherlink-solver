@@ -1,4 +1,6 @@
 
+
+import itertools
 from point import Point
 from edge import Edge
 from structure import Cross, TargetSquare, CrossPlusSquare, \
@@ -24,9 +26,7 @@ class Board:
         self._initialize_crosses()
         self._initialize_squares()
         self._initialize_cross_plus_squares()
-        self._initialize_adjacent_squares_one_one()
-        self._initialize_adjacent_squares_one_three()
-        self._initialize_adjacent_squares_three_three()
+        self._initialize_adjacent_squares()
         self._initialize_cross_square_crosses()
         self._initialize_cross_square_crosses_not_adjacent()
         
@@ -76,54 +76,41 @@ class Board:
                 Edge(source=here, dest=right)
             )
 
-    def _initialize_adjacent_squares_three_three(self):
-        
+    def _initialize_adjacent_squares(self):
+
         adjacent_squares = []
-        threes = [square for square in self.squares if square.target == 3]
-        for square1 in threes:
-            for square2 in threes:
+        squares = [sq for sq in self.squares if sq.target == 1 or sq.target == 3]
 
-                edges_common = square1.edges.intersection(square2.edges)
+        for square1, square2 in itertools.combinations(squares, r = 2): 
+            if self._are_squares_adjacent(square1, square2):
+                
+                crosses = [cr for cr in self.crosses if self._is_cross_next_to_square(cr, square1)]
+                crosses = [cr for cr in crosses if self._is_cross_next_to_square(cr, square2)]
 
-                if len(edges_common) == 1:
-                    crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
-                    struc = AdjacentSquaresThreeThree(square1, square2, crosses[0], crosses[1])
-                    adjacent_squares.append(struc)
-
-        self.adjacent_squares_three_three = adjacent_squares
-
-    def _initialize_adjacent_squares_one_one(self):
+                for cross1, cross2 in itertools.permutations(crosses, r = 2): 
+                    new = self._create_adjacent_squares(square1, square2, cross1, cross2)
+                    adjacent_squares.append(new)
         
-        adjacent_squares = []
-        ones = [square for square in self.squares if square.target == 1]
-        for square1 in ones:
-            for square2 in ones:
+        self.adjacent_squares = adjacent_squares
 
-                edges_common = square1.edges.intersection(square2.edges)
-
-                if len(edges_common) == 1:
-                    crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
-                    struc = AdjacentSquaresOneOne(square1, square2, crosses[0], crosses[1])
-                    adjacent_squares.append(struc)
-
-        self.adjacent_squares_one_one = adjacent_squares
-
-    def _initialize_adjacent_squares_one_three(self):
-        
-        adjacent_squares = []
-        ones = [square for square in self.squares if square.target == 1]
-        threes = [square for square in self.squares if square.target == 3]
-        for square1 in ones:
-            for square3 in threes:
-
-                edges_common = square1.edges.intersection(square3.edges)
-
-                if len(edges_common) == 1:
-                    crosses = [cross for cross in self.crosses if len(cross.edges.intersection(edges_common)) > 0]
-                    struc = AdjacentSquaresOneThree(square1, square3, crosses[0], crosses[1])
-                    adjacent_squares.append(struc)
-
-        self.adjacent_squares_one_three = adjacent_squares
+    @staticmethod
+    def _is_cross_next_to_square(cross: Cross, square: TargetSquare):
+        "Cross is next to square if they have two common edges."
+        edges = cross.edges.intersection(square.edges)
+        return len(edges) == 2
+    
+    @staticmethod
+    def _create_adjacent_squares(square1, square2, cross1, cross2):
+        if square1.target == 1:
+            if square2.target == 1:
+                return AdjacentSquaresOneOne(square1, square2, cross1)
+            elif square2.target == 3:
+                return AdjacentSquaresOneThree(square1, square2, cross1)
+        elif square1.target == 3: 
+            if square2.target == 1:
+                return AdjacentSquaresOneThree(square2, square1, cross1)
+            elif square2.target == 3: 
+                return AdjacentSquaresThreeThree(square1, square2, cross1, cross2)
 
     def _initialize_squares(self):
         squares = []
@@ -214,11 +201,7 @@ class Board:
         for cross_plus_square in self.cross_plus_squares:
             cross_plus_square.solve()
 
-        for adjacent_squares in self.adjacent_squares_three_three:
-            adjacent_squares.solve()
-        for adjacent_squares in self.adjacent_squares_one_three:
-            adjacent_squares.solve()
-        for adjacent_squares in self.adjacent_squares_one_one:
+        for adjacent_squares in self.adjacent_squares:
             adjacent_squares.solve()
 
         for cross_square_cross in self.cross_square_crosses:

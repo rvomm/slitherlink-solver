@@ -1,6 +1,7 @@
  
 from abc import ABC, abstractclassmethod
 from edgeset import EdgeSet
+from edge import Edge
 
 class Structure(ABC):
     """
@@ -137,56 +138,66 @@ class CrossPlusSquare(Structure):
         
 class AdjacentSquaresOneOne(Structure):
 
-    def __init__(self, square1, square2, cross1, cross2):
+    def __init__(self, square1, square2, cross):
         
         super().__init__()
-
-        crosses = cross1.edges.union(cross2.edges)
-        squares = square1.edges.union(square2.edges)
-
-        self.total = EdgeSet(squares.union(crosses))
-        self.square_mid = EdgeSet(square1.edges.intersection(square2.edges))
-        self.square_outliers = EdgeSet(crosses.difference(squares))
-        
-    def edge_set(self):
-        return self.total
-
+        self.square1 = square1 
+        self.square2 = square2
+        self.cross = cross
+    
     def _try_solve(self):
-        if (self.square_outliers.n_dead() > 0):
-            self.square_mid.kill_remaining()
+        if self._outlier_edge().is_dead():
+            self._mid_edge().kill()
+
+    def _square_edges(self) -> set:
+        return self.square1.edges.union(self.square2.edges)
+
+    def _outlier_edge(self) -> Edge:
+        [edge] = self.cross.edges.difference(self._square_edges())
+        return edge
+
+    def _mid_edge(self) -> Edge:
+        [edge] = self.square1.edges.intersection(self.square2.edges)
+        return edge
+        
+    def edge_set(self) -> EdgeSet:
+        return EdgeSet(set([self._outlier_edge()]))
     
 class AdjacentSquaresThreeThree(Structure):
 
     def __init__(self, square1, square2, cross1, cross2):
         
         super().__init__()
-
-        crosses = cross1.edges.union(cross2.edges)
-        squares = square1.edges.union(square2.edges)
-
-        self.total = EdgeSet(squares.union(crosses))
-        self.square_mid = EdgeSet(square1.edges.intersection(square2.edges))
-        self.square_opposites = EdgeSet(squares.difference(crosses))
-        self.square_outliers = EdgeSet(crosses.difference(squares))
+        self.square1 = square1
+        self.square2 = square2
+        self.cross1 = cross1
+        self.cross2 = cross2
         
     def edge_set(self):
-        return self.total
+        return EdgeSet(self._mid_edges())
 
     def _try_solve(self):
 
-        self._make_square_mid()
-        self._make_square_opposites()
-        self._kill_square_outliers()
+        EdgeSet(self._outlier_edges()).kill_remaining()
+        EdgeSet(self._opposite_edges()).make_remaining()
+        EdgeSet(self._mid_edges()).make_remaining()
 
-    def _make_square_mid(self):
-        self.square_mid.make_remaining()
+    def _outlier_edges(self):
+        return self._cross_edges().difference(self._square_edges())
+    
+    def _opposite_edges(self):
+        return self._square_edges().difference(self._cross_edges())
+    
+    def _mid_edges(self):
+        return self.square1.edges.intersection(self.square2.edges)
 
-    def _make_square_opposites(self):
-        self.square_opposites.make_remaining()
+    def _cross_edges(self):
+        return self.cross1.edges.union(self.cross2.edges)
 
-    def _kill_square_outliers(self): 
-        self.square_outliers.kill_remaining()
+    def _square_edges(self):
+        return self.square1.edges.union(self.square2.edges)
 
+    
 class AdjacentSquaresOneThree(Structure):
     """
     A 1-square and an adjacent 3-square, accompanied by their two overlapping
@@ -195,32 +206,33 @@ class AdjacentSquaresOneThree(Structure):
     If a cross has a dead 'outlier' edge (the edge not part of either square),
     the edge of the cross adjacent to only the 3-square must be alive.
     """
-    def __init__(self, square1, square3, cross1, cross2):
+    def __init__(self, square1, square2, cross):
         
         super().__init__()
-
-        self.crosses = [cross1, cross2]
         self.square1 = square1
-        self.square3 = square3
+        self.square2 = square2
+        self.cross = cross
+    
+    def _square_edges(self) -> set:
+        return self.square1.edges.union(self.square2.edges)
 
-    def edge_set(self):
-        edges = set([self._cross_outlier(cross) for cross in self.crosses])
-        return EdgeSet(edges)
+    def _outlier_edge(self) -> Edge:
+        [edge] = self.cross.edges.difference(self._square_edges())
+        return edge
 
-    def _try_solve(self):
-
-        for cross in self.crosses:
-            if self._cross_outlier(cross).is_dead():
-                self._make_square3_edge_(cross)
+    def _square_three_edge(self) -> Edge:
+        edges = self.square2.edges
+        edges = edges.intersection(self.cross.edges)
+        [edge] = edges.difference(self.square1.edges)
+        return edge
         
-    def _cross_outlier(self, cross):
-        edges = cross.edges.difference(self.square1.edges).difference(self.square3.edges)
-        return next(iter(edges))
-
-    def _make_square3_edge_(self, cross): 
-        [edge] = self.square3.edges.difference(self.square1.edges).intersection(cross.edges)
-        edge.make()
-
+    def edge_set(self) -> EdgeSet:
+        return EdgeSet(set([self._outlier_edge()]))
+    
+    def _try_solve(self):
+        if self._outlier_edge().is_dead():
+            self._square_three_edge().make()
+        
 
 class CrossSquareCross(Structure):
     """
