@@ -188,7 +188,13 @@ class AdjacentThreeThree(Structure):
         self.square_outliers.kill_remaining()
 
 class AdjacentOneThree(Structure):
+    """
+    A 1-square and an adjacent 3-square, accompanied by their two overlapping
+    cross. 
 
+    If a cross has a dead 'outlier' edge (the edge not part of either square),
+    the edge of the cross adjacent to only the 3-square must be alive.
+    """
     def __init__(self, square1, square3, cross1, cross2):
         
         super().__init__()
@@ -214,32 +220,57 @@ class AdjacentOneThree(Structure):
         self.square3.difference(self.square1).intersection(cross).pop().make()
 
 
-class SquareTwoUniquenessContraint(Structure):
-
-    def __init__(self, square: TargetSquare, crosses: list):
+class CrossSquareCross(Structure):
+    """
+    A 2-square with two opposing edges. 
+    """
+    def __init__(self, square: TargetSquare, cross1: Cross, cross2: Cross):
         super().__init__()
-        self.square = square.edges
-        self.crosses = [cross.edges for cross in crosses]
+        self.square = square
+        self.cross1 = cross1
+        self.cross2 = cross2
     
     def edge_set(self):
-        return EdgeSet(self.square)
+        return EdgeSet(self.square.edges)
         
     def _try_solve(self): 
-        for cross in self.crosses:
-            if self._cross_edges_outgoing(cross).n_dead() == 2:
-                opposite = self._cross_opposite(cross)
-                if self._cross_edges_outgoing(opposite).n_unknown() == 2:
-                    self._cross_edges_common(cross).make_remaining()
-                    self._cross_edges_outgoing(opposite).make_remaining()
+        pass
 
-    def _cross_opposite(self, cross):
-        opposite = [cross2 for cross2 in self.crosses if len(cross2.intersection(cross)) == 0]
-        return opposite.pop()
+class CrossSquareCrossNotAdjacent(Structure):
+    """
+    A CrossSquareCross structure that is not adjacent (horizontally or 
+    vertically) to any other TargetSquares. 
 
-    def _cross_edges_outgoing(self, cross): 
-        edges = cross.difference(self.square)
-        return EdgeSet(edges)
+    For such structures, we can leverage on the uniqueness of the solution. 
+    If one edge has zero incoming edges (both are dead edges), there are only
+    two solutions for the 2-square. The opposite cross (cross2) then either 
+    has zero or two edges alive. To solve we reason by contradiction:
+    
+    Suppose the opposite cross has zero edges alive. Then the square is not 
+    restricted by these opposing crosses. But there are also no constraints
+    implied by any adjacent squares (there are none!). This means that the
+    square must have two solutions! This contradicts the uniqueness of the 
+    solution.
 
-    def _cross_edges_common(self, cross): 
-        edges = cross.intersection(self.square)
+    Hence, the opposite cross must have two edges alive. The solution of the 
+    rest of the square is dealt with by the relevant CrossSquare object. A 
+    simple example would be a 2-square in a corner without adjacent squares.
+    """
+    def __init__(self, square: TargetSquare, cross1: Cross, cross2: Cross):
+        
+        super().__init__()
+        self.square = square
+        self.cross1 = cross1
+        self.cross2 = cross2
+    
+    def edge_set(self):
+        return EdgeSet(self.square.edges)
+        
+    def _try_solve(self): 
+        if self._cross_edges_outgoing(self.cross1).n_dead() == 2:
+            if self._cross_edges_outgoing(self.cross2).n_unknown() == 2:
+                self._cross_edges_outgoing(self.cross2).make_remaining()
+
+    def _cross_edges_outgoing(self, cross: Cross): 
+        edges = cross.edges.difference(self.square.edges)
         return EdgeSet(edges)

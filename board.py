@@ -1,7 +1,8 @@
 
 from point import Point
 from edge import Edge
-from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree, AdjacentOneOne, AdjacentOneThree, CrossSquareCross
+from structure import Cross, TargetSquare, CrossPlusSquare, AdjacentThreeThree, \
+    AdjacentOneOne, AdjacentOneThree, CrossSquareCross, CrossSquareCrossNotAdjacent
 
 class Board:
 
@@ -26,6 +27,7 @@ class Board:
         self._initialize_adjacent_one_threes()
         self._initialize_adjacent_three_threes()
         self._initialize_cross_square_crosses()
+        self._initialize_cross_square_crosses_not_adjacent()
         
     
     def _initialize_points(self):
@@ -139,31 +141,69 @@ class Board:
                     squares.append(TargetSquare(constraint, edges))
         self.squares = squares
 
+
     def _initialize_cross_square_crosses(self):
         """
-        Only for squares with target 2, we need to create a structure with the square
-        and diagonal crosses. By considering ordered pairs, there are four different 
-        combinations per square.  
+        Only for squares with target 2, create a structure with the square and 
+        two (diagonally-) opposite crosses. The structure is build around 
+        ordered pairs of crosses, so every combination is generated twice. 
+        Therefore, every 2-square will result in four different CrossSquareCross 
+        objects.
         """
         cross_square_crosses = []
-        square2s = [square for square in self.squares if square.target == 2]
+        squares = [square for square in self.squares if square.target == 2]
 
-        for square2 in square2s:
+        for square in squares:
 
-            adjacent = [square for square in self.squares if len(square.edges.intersection(square2.edges)) == 1]
-            if (len(adjacent) == 0):
+            crosses = [cross for cross in self.crosses if len(cross.edges.intersection(square.edges)) > 0]
+            for cross1 in crosses:
+                cross2 = next(iter(
+                    [cross for cross in crosses if len(cross1.edges.intersection(cross.edges)) == 0]
+                ))
+                
+                new = CrossSquareCross(square, cross1, cross2)
+                cross_square_crosses.append(new)
 
-                crosses = [cross for cross in self.crosses if len(cross.edges.intersection(square2.edges)) > 0]
+        self.cross_square_crosses = cross_square_crosses  
+
+    def _initialize_cross_square_crosses_not_adjacent(self):
+        """
+        Special case of the CrossSquareCross objects, where the square is not adjacent to 
+        any other TargetSquare (horizontally or vertically). In this case, we can use the 
+        uniqueness of the solution to add one more solving tactic. 
+        """
+        
+        cross_square_crosses = []
+        squares = [square for square in self.squares if square.target == 2]
+
+        for square in squares:
+
+            if not self._square_has_adjacent_squares(square):
+                
+                crosses = [cross for cross in self.crosses if self._n_overlapping(cross.edges, square.edges) > 0]
+
+                # for each cross, find the diagonally opposite
                 for cross1 in crosses:
                     cross2 = next(iter(
                         [cross for cross in crosses if len(cross1.edges.intersection(cross.edges)) == 0]
                     ))
                     
-                cross_square_crosses.append(
-                    CrossSquareCross(square2, [cross1, cross2])
-                )
+                    new = CrossSquareCrossNotAdjacent(square, cross1, cross2)
+                    cross_square_crosses.append(new)
 
-        self.cross_square_crosses = cross_square_crosses        
+        self.cross_square_crosses_not_adjacent = cross_square_crosses  
+    
+    @staticmethod
+    def _n_overlapping(x: set, y: set):
+        return len(x.intersection(y))
+
+    def _square_has_adjacent_squares(self, square: TargetSquare):
+        adjacent = [sq for sq in self.squares if self._are_squares_adjacent(square, sq)]
+        return len(adjacent) != 0
+
+    @staticmethod
+    def _are_squares_adjacent(square1: TargetSquare, square2: TargetSquare):
+        return len(square1.edges.intersection(square2.edges)) == 1
 
     def solve_iteration(self):
         for cross in self.crosses:
@@ -182,6 +222,10 @@ class Board:
 
         for cross_square_cross in self.cross_square_crosses:
             cross_square_cross.solve()
+
+        for cross_square_cross in self.cross_square_crosses_not_adjacent:
+            cross_square_cross.solve()
+
         self.point_group_update()
         self.print(True)
 
