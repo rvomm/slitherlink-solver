@@ -54,19 +54,19 @@ x 0 x   x 1 x   x 2 |   x 3 |
 * If two edges are alive, kill the remaining unknown edges. 
 
 ```
-+   +   +
+    +    
          
 +   +---+
     |    
-+   +   +
+    +    
 ```
 
 ```
-+   +   +
+    +    
     x    
 + x +---+
     |    
-+   +   +
+    +    
 ```
 
 * If three edges are known, complete the remaining unknown edge:
@@ -74,20 +74,20 @@ x 0 x   x 1 x   x 2 |   x 3 |
     * If no edge is alive, kill the unknown edge.
 
 ```
-+   +   +      +   +   +
+    +              +    
     x              x
 +---+   +      + x +   +
     x              x
-+   +   +      +   +   +
+    +              +    
 ```
 
 
 ```
-+   +   +   +   +   +
-    x           x
-+---+---+   + x + x +
-    x           x
-+   +   +   +   +   +
+    +              +    
+    x              x
++---+---+      + x + x +
+    x              x
+    +              +    
 ```
 
 ## Adjacent squares
