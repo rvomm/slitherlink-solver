@@ -11,7 +11,7 @@ and add the environment.yml in the repository
 ## Target squares
 
 * If **N** edges are alive, kill the remaining unknown edges.
-* If **N-M** edges are alive and only **M** edges are still unknown, make remaining unknown edges.
+* If **N-M** edges are alive and only **M** edges remain unknown, make remaining unknown edges.
 
 Completing a square by killing remaining edges: 
 
