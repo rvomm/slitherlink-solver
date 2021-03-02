@@ -13,13 +13,13 @@ and add the environment.yml in the repository
 
 ## Cross
 
-```
+<pre>
     +
 
 +   <b>+</b>   +
 
     +
-```
+</pre>
 
 * If two edges are alive, kill the remaining unknown edges. 
 * If three edges are known, deduce the remaining unknown edge:
