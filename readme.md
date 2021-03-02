@@ -10,6 +10,21 @@ and add the environment.yml in the repository
 
 ## Target squares
 
+* If **N** edges are alive, kill the remaining unknown edges.
+* If **N-M** edges are alive and **MM** edges are unknown, make the unknown edges.
+
+<pre> 
++   +   +   +   +   +   +   +
+  0       1       2       3
++   +   +   +   +   +   +   +
+</pre>
+
+
+<pre> 
++ x +   + x +   +   +   +   +
+x 0 x   x 1 x     2       3
++ x +   + x +   +   +   +   +
+</pre>
 
 ## Cross
 
@@ -32,9 +47,9 @@ and add the environment.yml in the repository
 +   <b>+</b>---+   +   <b>+</b>---+   + x <b>+</b>   +
     |           x           x
 +   +   +   +   +   +   +   +   +
-```
+</pre>
 
-```
+<pre>
 +   +   +   +   +   +   +   +   +
     x           x           x
 + x <b>+</b>---+   +---<b>+</b>---+   + x <b>+</b> x +
@@ -42,10 +57,9 @@ and add the environment.yml in the repository
 +   +   +   +   +   +   +   +   +
 </pre>
 
-
 ## Adjacent squares
 
-### Adjacent squares: 1-1
+### Adjacent squares: 1 - 1
 
 ```
 +   +   +   +   +
@@ -67,7 +81,7 @@ and add the environment.yml in the repository
 +   +   +   +   + 
 ```
 
-### Adjacent squares: 1-3
+### Adjacent squares: 1 - 3
 
 ```
 +   +   +   +   +
@@ -89,7 +103,7 @@ and add the environment.yml in the repository
 +   +   +   +   + 
 ```
 
-### Adjacent squares: 3-3
+### Adjacent squares: 3 - 3
 
 ```
 +   +   +   +   +
