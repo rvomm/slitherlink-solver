@@ -52,8 +52,8 @@ x 0 x   x 1 x   x 2 |   x 3 |
 ```
 
 * If two edges are alive, kill the remaining unknown edges. 
-* If three edges are known, deduce the remaining unknown edge:
-    * If one edge is alive, make the unknown edge.
+* If three edges are known, complete the remaining unknown edge:
+    * If one edge is alive, make the unknown edge alive.
     * If no edge is alive, kill the unknown edge.
 
 <pre>
