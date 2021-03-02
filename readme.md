@@ -11,19 +11,35 @@ and add the environment.yml in the repository
 ## Target squares
 
 * If **N** edges are alive, kill the remaining unknown edges.
-* If **N-M** edges are alive and **MM** edges are unknown, make the unknown edges.
+* If **N-M** edges are alive and only **M** edges are still unknown, make remaining unknown edges.
 
+Completing a square by killing remaining edges: 
 <pre> 
-+   +   +   +   +   +   +   +
-  0       1       2       3
-+   +   +   +   +   +   +   +
++   +   +---+   +---+   +---+
+  0       1       2 |     3 |
++   +   +   +   +   +   +---+
 </pre>
 
 
 <pre> 
-+ x +   + x +   +   +   +   +
-x 0 x   x 1 x     2       3
-+ x +   + x +   +   +   +   +
++ x +   +---+   +---+   +---+
+x 0 x   x 1 x   x 2 |   x 3 |
++ x +   + x +   + x +   +---+
+</pre>
+
+Completing a square by making the remaining:
+
+<pre> 
++ x +   +   +   +   +   +   +
+x 0 x   x 1 x   x 2     x 3  
++ x +   + x +   + x +   +   +
+</pre>
+
+
+<pre> 
++ x +   +---+   +---+   +---+
+x 0 x   x 1 x   x 2 |   x 3 |
++ x +   + x +   + x +   +---+
 </pre>
 
 ## Cross
