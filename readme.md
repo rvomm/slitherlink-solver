@@ -26,10 +26,10 @@ and add the environment.yml in the repository
     * If one edge is alive, make the unknown edge.
     * If no edge is alive, kill the unknown edge.
 
-```
+<pre>
 +   +   +   +   +   +   +   +   +
                 x           x
-+   +---+   +---+   +   +   + x +
++   <b>+</b>---+   +   <b>+</b>---+   + x <b>+</b>   +
     |           x           x
 +   +   +   +   +   +   +   +   +
 ```
@@ -37,10 +37,10 @@ and add the environment.yml in the repository
 ```
 +   +   +   +   +   +   +   +   +
     x           x           x
-+ x +---+   +---+---+   + x + x +
++ x <b>+</b>---+   +---<b>+</b>---+   + x <b>+</b> x +
     |           x           x
 +   +   +   +   +   +   +   +   +
-```
+</pre>
 
 
 ## Adjacent squares
