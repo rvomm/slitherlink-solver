@@ -16,7 +16,7 @@ and add the environment.yml in the repository
 ```
     +
 
-+   +   +
++   <b>+</b>   +
 
     +
 ```
