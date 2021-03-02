@@ -8,7 +8,44 @@ and add the environment.yml in the repository
 
 # Tactics 
 
+## Target squares
+
+
+## Cross
+
+```
+    +
+
++   +   +
+
+    +
+```
+
+* If two edges are alive, kill the remaining unknown edges. 
+* If three edges are known, deduce the remaining unknown edge:
+    * If one edge is alive, make the unknown edge.
+    * If no edge is alive, kill the unknown edge.
+
+```
++   +   +   +   +   +   +   +   +
+                x           x
++   +---+   +---+   +   +   + x +
+    |           x           x
++   +   +   +   +   +   +   +   +
+```
+
+```
++   +   +   +   +   +   +   +   +
+    x           x           x
++ x +---+   +---+---+   + x + x +
+    |           x           x
++   +   +   +   +   +   +   +   +
+```
+
+
 ## Adjacent squares
+
+### Adjacent squares: 1-1
 
 ```
 +   +   +   +   +
@@ -21,9 +58,55 @@ and add the environment.yml in the repository
 ```
 
 ```
++   +   +   +   +
+        x
 +   +   +   +   + 
       1 x 1
 +   +   +   +   + 
 
++   +   +   +   + 
+```
+
+### Adjacent squares: 1-3
+
+```
++   +   +   +   +
+        x
++   +   +   +   + 
+      1   3
++   +   +   +   + 
+
++   +   +   +   + 
+```
+
+```
++   +   +   +   +
+        x
++   +   +---+   + 
+      1   3
++   +   +   +   + 
+
++   +   +   +   + 
+```
+
+### Adjacent squares: 3-3
+
+```
++   +   +   +   +
+        
++   +   +   +   + 
+      3   3
++   +   +   +   + 
+
++   +   +   +   + 
+```
+
+```
++   +   +   +   +
+        x
++   +   +   +   + 
+    | 3 | 3 |
++   +   +   +   + 
+        x
 +   +   +   +   + 
 ```
