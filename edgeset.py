@@ -29,5 +29,5 @@ class EdgeSet:
         return sum(is_unknown)
 
     def is_equal_to(self, edge_set: EdgeSet):
-        return self.edges = edge_set.edges
+        return self.edges == edge_set.edges
 
