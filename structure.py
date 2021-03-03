@@ -242,7 +242,7 @@ class AdjacentSquaresOneThree(Structure):
             self._square_three_edge().make()
         
 
-class CrossSquareCross(Structure):
+class SquareWithDiagonalCrosses(Structure):
     """
     A 2-square with two opposing edges. 
     """
@@ -258,7 +258,7 @@ class CrossSquareCross(Structure):
     def _try_solve(self): 
         pass
 
-class CrossSquareCrossNotAdjacent(Structure):
+class SquareWithDiagonalCrossesNotAdjacent(Structure):
     """
     A CrossSquareCross structure that is not adjacent (horizontally or 
     vertically) to any other TargetSquares. 

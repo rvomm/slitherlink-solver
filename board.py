@@ -5,7 +5,7 @@ from point import Point
 from edge import Edge
 from structure import Cross, TargetSquare, CrossPlusSquare, \
     AdjacentSquaresThreeThree, AdjacentSquaresOneOne, AdjacentSquaresOneThree, \
-        CrossSquareCross, CrossSquareCrossNotAdjacent
+        SquareWithDiagonalCrosses, SquareWithDiagonalCrossesNotAdjacent
 
 class Board:
 
@@ -27,8 +27,8 @@ class Board:
         self._initialize_squares()
         self._initialize_cross_plus_squares()
         self._initialize_adjacent_squares()
-        self._initialize_cross_square_crosses()
-        self._initialize_cross_square_crosses_not_adjacent()
+        self._initialize_square_with_diag_crosses()
+        self._initialize_square_with_diag_crosses_not_adjacent()
         
     
     def _initialize_points(self):
@@ -135,7 +135,7 @@ class Board:
         self.squares = squares
 
 
-    def _initialize_cross_square_crosses(self):
+    def _initialize_square_with_diag_crosses(self):
         """
         Only for squares with target 2, create a structure with the square and 
         two (diagonally-) opposite crosses. The structure is build around 
@@ -143,7 +143,7 @@ class Board:
         Therefore, every 2-square will result in four different CrossSquareCross 
         objects.
         """
-        cross_square_crosses = []
+        square_with_diag_crosses = []
         squares = [square for square in self.squares if square.target == 2]
 
         for square in squares:
@@ -154,19 +154,19 @@ class Board:
                     [cross for cross in crosses if len(cross1.edges.intersection(cross.edges)) == 0]
                 ))
                 
-                new = CrossSquareCross(square, cross1, cross2)
-                cross_square_crosses.append(new)
+                new = SquareWithDiagonalCrosses(square, cross1, cross2)
+                square_with_diag_crosses.append(new)
 
-        self.cross_square_crosses = cross_square_crosses  
+        self.square_with_diag_crosses = square_with_diag_crosses  
 
-    def _initialize_cross_square_crosses_not_adjacent(self):
+    def _initialize_square_with_diag_crosses_not_adjacent(self):
         """
         Special case of the CrossSquareCross objects, where the square is not adjacent to 
         any other TargetSquare (horizontally or vertically). In this case, we can use the 
         uniqueness of the solution to add one more solving tactic. 
         """
         
-        cross_square_crosses = []
+        square_with_diag_crosses = []
         squares = [square for square in self.squares if square.target == 2]
 
         for square in squares:
@@ -178,10 +178,10 @@ class Board:
                 # for each cross, find the diagonally opposite cross
                 for cross1 in crosses:
                     [cross2] = [cross for cross in crosses if len(cross1.edges.intersection(cross.edges)) == 0]                    
-                    new = CrossSquareCrossNotAdjacent(square, cross1, cross2)
-                    cross_square_crosses.append(new)
+                    new = SquareWithDiagonalCrossesNotAdjacent(square, cross1, cross2)
+                    square_with_diag_crosses.append(new)
 
-        self.cross_square_crosses_not_adjacent = cross_square_crosses  
+        self.square_with_diag_crosses_not_adjacent = square_with_diag_crosses  
     
     @staticmethod
     def _n_overlapping(x: set, y: set):
@@ -206,11 +206,11 @@ class Board:
         for adjacent_squares in self.adjacent_squares:
             adjacent_squares.solve()
 
-        for cross_square_cross in self.cross_square_crosses:
-            cross_square_cross.solve()
+        for square_with_diag_cross in self.square_with_diag_crosses:
+            square_with_diag_cross.solve()
 
-        for cross_square_cross in self.cross_square_crosses_not_adjacent:
-            cross_square_cross.solve()
+        for square_with_diag_cross in self.square_with_diag_crosses_not_adjacent:
+            square_with_diag_cross.solve()
 
         self.point_group_update()
         self.print(True)
