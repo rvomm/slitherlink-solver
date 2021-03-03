@@ -256,7 +256,14 @@ class SquareWithDiagonalCrosses(Structure):
         return EdgeSet(self.square.edges)
         
     def _try_solve(self): 
-        pass
+        if self._cross_edges_outgoing(self.cross1).n_alive() == 1:
+            if self._cross_edges_outgoing(self.cross2).n_alive() == 1:
+                self._cross_edges_outgoing(self.cross1).kill_remaining()
+                self._cross_edges_outgoing(self.cross2).kill_remaining()
+    
+    def _cross_edges_outgoing(self, cross: Cross): 
+        edges = cross.edges.difference(self.square.edges)
+        return EdgeSet(edges)
 
 class SquareWithDiagonalCrossesNotAdjacent(Structure):
     """
