@@ -49,8 +49,23 @@ class Cross(Structure):
         super().__init__()
 
         self.edges = edges
+        self.pairs_opposite = []
 
+    def edge_set(self):
+        return EdgeSet(self.edges)
+
+    def add_pair_opposite(self, pair):
+        if not self.is_pair_opposite(pair):
+            self.pairs_opposite.append(pair)
+
+    def is_pair_opposite(self, pair):
+        return any([edge_set.is_equal_to(pair) for edge_set in self.pairs_opposite])
+    
     def _try_solve(self):
+        self._update_basics()
+        self._update_pairs_opposite()
+
+    def _update_basics(self):
         if self.edge_set().n_alive() == 2:
             self.edge_set().kill_remaining()
         elif self.edge_set().n_unknown() == 1: 
@@ -59,8 +74,12 @@ class Cross(Structure):
             else:
                 self.edge_set().kill_remaining()
 
-    def edge_set(self):
-        return EdgeSet(self.edges)
+    def _update_pairs_opposite(self):
+        for pair in self.pairs_opposite:
+            if pair.n_alive() == 1:
+                pair.kill_remaining()
+            if pair.n_dead() == 1:
+                pair.make_remaining()
 
 class TargetSquare(Structure):
     """
@@ -101,40 +120,76 @@ class CrossPlusSquare(Structure):
         self.cross = cross
         self.square = square
 
-        self.edges_opposing = EdgeSet(square.edges - cross.edges)
-        self.edges_common = EdgeSet(cross.edges.intersection(square.edges))
-        self.edges_outgoing = EdgeSet(cross.edges - square.edges)
-
     def edge_set(self):
         return EdgeSet(self.cross.edges.union(self.square.edges))
 
     def _try_solve(self):
+
         if self.square.target == 1:
-            if self._cross_is_incoming():
-                self.edges_opposing.kill_remaining()
-            
-            if self.edges_outgoing.n_dead() == 2:
-                self.edges_common.kill_remaining()
+            self._update_target_one()
 
         if self.square.target == 2:
-            if self._cross_is_incoming():
-                if self.edges_opposing.n_alive() == 1:
-                    self.edges_opposing.kill_remaining()
-                if self.edges_opposing.n_dead() == 1:
-                    self.edges_opposing.make_remaining()
+            self._update_target_two()
         
-        if self.square.target == 3: 
-            if self.edges_outgoing.n_alive() == 1:
-                self.edges_opposing.make_remaining()
-                self.edges_outgoing.kill_remaining()
-            if self.edges_outgoing.n_dead() == 2:
-                self.edges_common.make_remaining()
+        if self.square.target == 3:
+            self._update_target_three()
+    
+    def _update_target_one(self):
 
+        if self._cross_is_incoming():
+            self._edges_opposing().kill_remaining()
+
+        if self._edges_outgoing().n_dead() == 2:
+            self._edges_common().kill_remaining()
+
+        # exude diagonal info
+        if self._edges_opposing().n_dead() == 2: 
+            self.cross.add_pair_opposite(self._edges_outgoing())
+            self.cross.add_pair_opposite(self._edges_common())
+        
+        # absorb diagonal info
+        if self.cross.is_pair_opposite(self._edges_common()):
+            self._edges_opposing().kill_remaining()
+
+    def _update_target_two(self):
+        
+        if self._cross_is_incoming():
+            if self._edges_opposing().n_alive() == 1:
+                self._edges_opposing().kill_remaining()
+            if self._edges_opposing().n_dead() == 1:
+                self._edges_opposing().make_remaining()
+    
+    def _update_target_three(self): 
+
+        if self._edges_outgoing().n_alive() == 1:
+            self._edges_opposing().make_remaining()
+            self._edges_outgoing().kill_remaining()
+        if self._edges_outgoing().n_dead() == 2:
+            self._edges_common().make_remaining()
+
+        # absorb diagonal info
+        if self.cross.is_pair_opposite(self._edges_outgoing()):
+            self._edges_opposing().make_remaining()
+        
+        # exude diagonal info
+        if self._edges_opposing().n_alive() == 2:
+            self.cross.add_pair_opposite(self._edges_common())
+            self.cross.add_pair_opposite(self._edges_outgoing())
+            
     def _cross_is_incoming(self):
         """
         Check if outgoing cross edges are linked to common edges.
         """
-        return self.edges_outgoing.n_alive() == 1 and self.edges_outgoing.n_dead() == 1
+        return self._edges_outgoing().n_alive() == 1 and self._edges_outgoing().n_dead() == 1
+
+    def _edges_opposing(self):
+        return EdgeSet(self.square.edges - self.cross.edges)
+
+    def _edges_common(self):
+        return EdgeSet(self.square.edges.intersection(self.cross.edges))
+    
+    def _edges_outgoing(self):
+        return EdgeSet(self.cross.edges.difference(self.square.edges))
         
 class AdjacentSquaresOneOne(Structure):
 
@@ -256,13 +311,32 @@ class SquareWithDiagonalCrosses(Structure):
         return EdgeSet(self.square.edges)
         
     def _try_solve(self): 
+        self._update_basics()
+        self._update_opposites()
+
+    def _update_basics(self):
+
         if self._cross_edges_outgoing(self.cross1).n_alive() == 1:
             if self._cross_edges_outgoing(self.cross2).n_alive() == 1:
                 self._cross_edges_outgoing(self.cross1).kill_remaining()
                 self._cross_edges_outgoing(self.cross2).kill_remaining()
-    
+
+    def _update_opposites(self):
+        "Pass on 'opposite' information from one cross to another"
+        if self.cross1.is_pair_opposite(self._cross_edges_common(self.cross1)):
+            self.cross2.add_pair_opposite(self._cross_edges_common(self.cross2))
+            self.cross2.add_pair_opposite(self._cross_edges_outgoing(self.cross2))
+
     def _cross_edges_outgoing(self, cross: Cross): 
         edges = cross.edges.difference(self.square.edges)
+        return EdgeSet(edges)
+    
+    def _cross_edges_common(self, cross: Cross): 
+        edges = cross.edges.intersection(self.square.edges)
+        return EdgeSet(edges)
+    
+    def _cross_edges_opposite(self, cross: Cross): 
+        edges = self.square.edges.difference(cross.edges)
         return EdgeSet(edges)
 
 class SquareWithDiagonalCrossesNotAdjacent(Structure):
