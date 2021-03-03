@@ -10,42 +10,82 @@ and add the environment.yml in the repository
 
 ## Target squares
 
+* If **N** edges are alive, kill the remaining unknown edges.
+* If **N-M** edges are alive and only **M** edges remain unknown, make remaining unknown edges.
+
+Completing a square by killing remaining edges: 
+
+```
++   +   +---+   +---+   +---+
+  0       1       2 |     3 |
++   +   +   +   +   +   +---+
+```
+
+``` 
++ x +   +---+   +---+   +---+
+x 0 x   x 1 x   x 2 |   x 3 |
++ x +   + x +   + x +   +---+
+```
+
+Completing a square by making the remaining:
+
+``` 
++ x +   +   +   +   +   +   +
+x 0 x   x 1 x   x 2     x 3  
++ x +   + x +   + x +   +   +
+```
+
+``` 
++ x +   +---+   +---+   +---+
+x 0 x   x 1 x   x 2 |   x 3 |
++ x +   + x +   + x +   +---+
+```
 
 ## Cross
 
 ```
     +
 
-+   <b>+</b>   +
++   +   +
 
     +
 ```
 
 * If two edges are alive, kill the remaining unknown edges. 
-* If three edges are known, deduce the remaining unknown edge:
-    * If one edge is alive, make the unknown edge.
+
+```
+    +                   +
+                        x
++   +---+    --->   + x +---+
+    |                   |
+    +                   +
+```
+
+* If three edges are known, complete the remaining unknown edge:
+    * If one edge is alive, make the unknown edge alive.
     * If no edge is alive, kill the unknown edge.
 
-```
-+   +   +   +   +   +   +   +   +
-                x           x
-+   +---+   +---+   +   +   + x +
-    |           x           x
-+   +   +   +   +   +   +   +   +
-```
 
 ```
-+   +   +   +   +   +   +   +   +
-    x           x           x
-+ x +---+   +---+---+   + x + x +
-    |           x           x
-+   +   +   +   +   +   +   +   +
+    +                   +
+    |                   |
++ x +   +    --->   + x +---+
+    x                   x
+    +                   +
 ```
 
+
+```
+    +                   +
+    x                   x
++ x +   +    --->   + x + x +
+    x                   x
+    +                   +
+```
 
 ## Adjacent squares
 
-### Adjacent squares: 1-1
+### Adjacent squares: 1 - 1
 
 ```
 +   +   +   +   +
@@ -67,7 +107,7 @@ and add the environment.yml in the repository
 +   +   +   +   + 
 ```
 
-### Adjacent squares: 1-3
+### Adjacent squares: 1 - 3
 
 ```
 +   +   +   +   +
@@ -89,7 +129,7 @@ and add the environment.yml in the repository
 +   +   +   +   + 
 ```
 
-### Adjacent squares: 3-3
+### Adjacent squares: 3 - 3
 
 ```
 +   +   +   +   +
@@ -109,4 +149,90 @@ and add the environment.yml in the repository
 +   +   +   +   + 
         x
 +   +   +   +   + 
+```
+
+## Cross + square
+
+A `cross + square` contains the union of the edges of a square with target and 
+a neighbouring cross.  
+
+```
++   +   +   +
+    |
++---+---+   +
+    | . |
++   +---+   +
+
++   +   +   +
+```
+### Cross + square: 1
+
+```
++   +   +   +   +   +   +   +
+    x               x
++---+   +   +   + x +   +   +
+      1               1
++   +   +   +   +   +   +   +
+
++   +   +   +   +   +   +   +
+```
+
+
+```
++   +   +   +   +   +   +   +
+    x               x
++---+   +   +   + x + x +   +
+      1 x           x 1
++   + x +   +   +   +   +   +
+
++   +   +   +   +   +   +   +
+```
+
+### Cross + square: 2
+
+### Cross + square: 3
+
+```
++   +   +   +   +   +   +   +
+                    
++---+   +   +   + x +   +   +
+      3               3 |
++   +   +   +   +   +---+   +
+
++   +   +   +   +   +   +   +
+```
+
+
+```
++   +   +   +   +   +   +   +
+    x               |
++---+   +   +   + x +   +   +
+      3 |           x 3 |
++   +---+   +   +   +---+   +
+
++   +   +   +   +   +   +   +
+```
+
+
+## Square + Diagonal crosses
+
+```
++   +   +   +
+           
++   +   +---+ 
+      2
++   +   +   + 
+    |   
++   +   +   + 
+```
+
+
+```
++   +   +   +
+           
++   +   +---+ 
+      2
++   +   +   + 
+    |   
++   +   +   + 
 ```
