@@ -28,6 +28,6 @@ class EdgeSet:
         is_unknown = [edge.is_unknown() for edge in self.edges]
         return sum(is_unknown)
 
-    def is_equal_to(self, edge_set: EdgeSet):
+    def is_equal_to(self, edge_set):
         return self.edges == edge_set.edges
 
