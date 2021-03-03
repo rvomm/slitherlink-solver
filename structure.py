@@ -322,8 +322,13 @@ class SquareWithDiagonalCrosses(Structure):
                 self._cross_edges_outgoing(self.cross2).kill_remaining()
 
     def _update_opposites(self):
-        "Pass on 'opposite' information from one cross to another"
+        # Pass on 'opposite' information from one cross to another
         if self.cross1.is_pair_opposite(self._cross_edges_common(self.cross1)):
+            self.cross2.add_pair_opposite(self._cross_edges_common(self.cross2))
+            self.cross2.add_pair_opposite(self._cross_edges_outgoing(self.cross2))
+        
+        # create opposite information on cross2
+        if self._is_cross_incoming(self.cross1):
             self.cross2.add_pair_opposite(self._cross_edges_common(self.cross2))
             self.cross2.add_pair_opposite(self._cross_edges_outgoing(self.cross2))
 
@@ -338,6 +343,10 @@ class SquareWithDiagonalCrosses(Structure):
     def _cross_edges_opposite(self, cross: Cross): 
         edges = self.square.edges.difference(cross.edges)
         return EdgeSet(edges)
+
+    def _is_cross_incoming(self, cross: Cross):
+        edges = self._cross_edges_outgoing(cross)
+        return edges.n_alive() == 1 and edges.n_dead() == 1
 
 class SquareWithDiagonalCrossesNotAdjacent(Structure):
     """
