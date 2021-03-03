@@ -271,19 +271,22 @@ class SquareWithDiagonalCrossesNotAdjacent(Structure):
     vertically) to any other TargetSquares. 
 
     For such structures, we can leverage on the uniqueness of the solution. 
-    If one edge has zero incoming edges (both are dead edges), there are only
+    If a cross has zero outgoing edges (both are dead edges), there are only
     two solutions for the 2-square. The opposite cross (cross2) then either 
     has zero or two edges alive. To solve we reason by contradiction:
     
-    Suppose the opposite cross has zero edges alive. Then the square is not 
-    restricted by these opposing crosses. But there are also no constraints
-    implied by any adjacent squares (there are none!). This means that the
-    square must have two solutions! This contradicts the uniqueness of the 
-    solution.
+    Suppose the opposite cross has zero outgoing edges alive. Then the square 
+    is not restricted by the two opposing crosses. But there are also no 
+    constraints implied by any adjacent squares (there are none!). This means 
+    that the square must have two solutions! One solution has a path along 
+    two edges of cross1, the other solution has a path along the edges of 
+    cross2. This contradicts the uniqueness of the solution.
 
-    Hence, the opposite cross must have two edges alive. The solution of the 
-    rest of the square is dealt with by the relevant CrossSquare object. A 
-    simple example would be a 2-square in a corner without adjacent squares.
+    Hence, the outgoing edges of the opposite cross must have be alive. The 
+    solution of the rest of the 2-square is dealt with by the relevant 
+    CrossSquare object.
+     
+    A simple example would be a 2-square in a corner without adjacent squares.
     """
     def __init__(self, square: TargetSquare, cross1: Cross, cross2: Cross):
         
