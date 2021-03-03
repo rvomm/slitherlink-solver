@@ -26,4 +26,8 @@ class EdgeSet:
 
     def n_unknown(self):
         is_unknown = [edge.is_unknown() for edge in self.edges]
-        return(sum(is_unknown))
+        return sum(is_unknown)
+
+    def is_equal_to(self, edge_set: EdgeSet):
+        return self.edges = edge_set.edges
+
