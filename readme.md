@@ -27,7 +27,7 @@ x 0 x   x 1 x   x 2 |   x 3 |
 + x +   + x +   + x +   +---+
 ```
 
-Completing a square by making the remaining:
+Completing a square by making remaining edges:
 
 ``` 
 + x +   +   +   +   +   +   +
@@ -87,6 +87,10 @@ x 0 x   x 1 x   x 2 |   x 3 |
 
 ### Adjacent squares: 1 - 1
 
+Adjacent 1-1 squares are 1-squares either horizontally or vertically adjacent. 
+A single edge between the squares can be killed when an incoming edge in the 
+middle of the squares is dead.
+
 ```
 +   +   +   +   +
         x
@@ -109,6 +113,10 @@ x 0 x   x 1 x   x 2 |   x 3 |
 
 ### Adjacent squares: 1 - 3
 
+Adjacent 1-3 squares is composed of a 1-square, horizontally or vertically adjacent to a 
+3-square. A single edge of the 3-square can be made when an incoming edge in the middle 
+of the squares is dead.
+
 ```
 +   +   +   +   +
         x
@@ -130,6 +138,9 @@ x 0 x   x 1 x   x 2 |   x 3 |
 ```
 
 ### Adjacent squares: 3 - 3
+
+Adjacent 3-3 squares can be solved without knowing anything about the surrounding
+edges.
 
 ```
 +   +   +   +   +
@@ -154,7 +165,8 @@ x 0 x   x 1 x   x 2 |   x 3 |
 ## Cross + square
 
 A `cross + square` contains the union of the edges of a square with target and 
-a neighbouring cross.  
+a neighbouring cross.  There are different tactics depending on the target 
+value.
 
 ```
 +   +   +   +
@@ -167,6 +179,10 @@ a neighbouring cross.
 ```
 ### Cross + square: 1
 
+When both incoming edges (cross edges not part of the square) are known, when can 
+solve part of the square edges. There are two different cases. Note that the third 
+case, where both edges are alive, is already dealt with by the cross structure. 
+
 ```
 +   +   +   +   +   +   +   +
     x               x
@@ -176,7 +192,6 @@ a neighbouring cross.
 
 +   +   +   +   +   +   +   +
 ```
-
 
 ```
 +   +   +   +   +   +   +   +
@@ -191,6 +206,8 @@ a neighbouring cross.
 ### Cross + square: 2
 
 ### Cross + square: 3
+
+If there is a single incoming edge
 
 ```
 +   +   +   +   +   +   +   +
@@ -207,7 +224,7 @@ a neighbouring cross.
 +   +   +   +   +   +   +   +
     x               |
 +---+   +   +   + x +   +   +
-      3 |           x 3 |
+      3 |             3 |
 +   +---+   +   +   +---+   +
 
 +   +   +   +   +   +   +   +
@@ -215,6 +232,25 @@ a neighbouring cross.
 
 
 ## Square + Diagonal crosses
+
+For 2-squares, we need to consider pairs of crosses diagonally opposing
+from the square. For every square there are two different tactics, formed
+by the two pairs of diagonally opposing crosses.
+
+```
++   +   +   +
+        |  
++   +---+---+ 
+    | . |
++---+---+   + 
+    |   
++   +   +   + 
+```
+
+### Square + Diagonal crosses: 2-square
+
+When both crosses have an incoming edge alive, the other incoming edges 
+must be killed. 
 
 ```
 +   +   +   +
@@ -236,3 +272,90 @@ a neighbouring cross.
     |   
 +   +   +   + 
 ```
+
+### Square + Diagonal crosses: 2-square (uniqueness)
+
+There is a special case of the Square + Diagonal crosses, arising when the 
+2-square is not adjcacent (horizontally or vertically) by any other target
+square. Here we can use the uniqueness of the solution to add another 
+solving strategy.
+
+If a cross has zero outgoing edges (both are dead edges), there are only
+two solutions for the 2-square. The opposite cross (cross2) then either 
+has zero or two edges alive. 
+
+```
++   +   +   +
+           
++   +   +   + 
+      2
++ x +   +   + 
+    x   
++   +   +   + 
+```
+
+To solve we reason by contradiction:
+    
+Suppose the opposite cross has zero incoming edges alive. Then the 
+solution of the square is not restricted by the two opposing crosses. 
+But there are also no constraints implied by any adjacent squares 
+(because there are none!). This means that the square must have two 
+solutions! One solution has a path along two edges of the first cross, 
+the other solution has a path along the edges of second cross. 
+This contradicts the uniqueness of the solution.
+
+**Proposition:**
+```
++   +   +   +
+        x  
++   +   + x + 
+      2
++ x +   +   + 
+    x   
++   +   +   + 
+```
+
+**Solution 1:**
+```
++   +   +   +
+        x  
++   +   + x + 
+    | 2
++ x +---+   + 
+    x   
++   +   +   + 
+```
+
+**Solution 2:**
+```
++   +   +   +
+        x  
++   +---+ x + 
+      2 |
++ x +   +   + 
+    x   
++   +   +   + 
+```
+
+Hence, the incoming edges of the opposite cross must be be alive. The 
+solution of the rest of the 2-square is dealt with by the relevant 
+CrossSquare object.
+
+**Solution:**
+```
++   +   +   +
+        |  
++   +   +---+ 
+      2
++ x +   +   + 
+    x   
++   +   +   + 
+```
+
+
+
+
+
+
+
+
