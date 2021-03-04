@@ -367,6 +367,142 @@ CrossSquare object.
 +   +   +   + 
 ```
 
+## Edge-pairs
+
+### Opposite edge pairs
+
+An opposite edge-pair is a set of two edges, where one edge must be alive and the 
+other must be dead. If both edges belong the the same cross, the opposite edge pair
+property is carried over the the remaining two edges of the cross. 
+
+In the example below the remaining edges of the 3-square for an opposite edge pair.
+The cross between the 3-square and 1-square carries over the opposite edge pair
+property the the squares within the 1-square. As either one of these edges must 
+be alive, all remaining edges of the 1-square can be killed.
+
+**Example:**
+```
++---+   +   +   +
+| 3
++   +   +   +   +
+      1
++   +   +   +   +
+        
++   +   +   +   +
+```
+
+**Solution:**
+```
++---+   +   +   +
+| 3
++   +   +   +   +
+      1 x
++   + x +   +   +
+        
++   +   +   +   +
+```
+
+The other way around works similarly.
+
+
+**Example:**
+```
++ x +   +   +
+x 1
++   +   +   +
+      3 
++   +   +   +
+        
++   +   +   +
+```
+
+**Solution:**
+```
++ x +   +   +
+x 1
++   +   +   +
+      3 |
++   +---+   +
+        
++   +   +   +
+```
+
+A 2-square can also carry over the opposite edge pair property. In the example
+below, every two square has two opposite edge pairs (up, left) and (down, right).
+Information is carried over across crosses and diagonal 2-squares until the 
+information is *absorbed*, in this case by a 1-square.
+
+**Example:**
+```
++---+   +   +   +   +
+| 3
++   +   +   +   +   +
+      2  
++   +   +   +   +   +
+          2  
++   +   +   +   +   +
+              1
++   +   +   +   +   +
+
++   +   +   +   +   +
+```
+
+**Solution:**
+```
++---+   +   +   +   +
+| 3
++   +   +   +   +   +
+      2  
++   +   +   +   +   +
+          2  
++   +   +   +   +   +
+              1 x
++   +   +   + x +   +
+
++   +   +   +   +   +
+```
+
+### Common edge pairs
+
+A common edge pair is a set of two edges that must be either both alive or 
+both dead. In the example below, the cross top-left of the 2-square TBD
+
+**Example:**
+```
++   +   +   +   +
+    x
++ x +   +   +   +
+      2 
++   +   +   +   +
+      2   3
++   +   +   +   +
+
++   +   +   +   +
+```
+
+**Solution:**
+```
++   +   +   +   +
+    x
++ x +   +   +   +
+      2 x
++   + x +   +   +
+      2   3
++   +   +   +   +
+
++   +   +   +   +
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
