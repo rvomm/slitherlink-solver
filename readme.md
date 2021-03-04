@@ -21,6 +21,7 @@ Completing a square by killing remaining edges:
 +   +   +   +   +   +   +---+
 ```
 
+**Solution:**
 ``` 
 + x +   +---+   +---+   +---+
 x 0 x   x 1 x   x 2 |   x 3 |
@@ -35,6 +36,7 @@ x 0 x   x 1 x   x 2     x 3
 + x +   + x +   + x +   +   +
 ```
 
+**Solution:**
 ``` 
 + x +   +---+   +---+   +---+
 x 0 x   x 1 x   x 2 |   x 3 |
@@ -54,11 +56,20 @@ x 0 x   x 1 x   x 2 |   x 3 |
 * If two edges are alive, kill the remaining unknown edges. 
 
 ```
-    +                   +
-                        x
-+   +---+    --->   + x +---+
-    |                   |
-    +                   +
+    +
+
++   +---+
+    |
+    +
+```
+
+**Solution:**
+```
+    +
+    x
++ x +---+
+    |
+    +
 ```
 
 * If three edges are known, complete the remaining unknown edge:
@@ -67,20 +78,20 @@ x 0 x   x 1 x   x 2 |   x 3 |
 
 
 ```
-    +                   +
-    |                   |
-+ x +   +    --->   + x +---+
-    x                   x
-    +                   +
+    +               +
+    |               x
++ x +   +   +   + x +   +
+    x               x
+    +               +
 ```
 
-
+**Solution:**
 ```
-    +                   +
-    x                   x
-+ x +   +    --->   + x + x +
-    x                   x
-    +                   +
+    +               +
+    |               x
++ x +---+   +   + x + x +
+    x               x
+    +               +
 ```
 
 ## Adjacent squares
@@ -101,6 +112,7 @@ middle of the squares is dead.
 +   +   +   +   + 
 ```
 
+**Solution:**
 ```
 +   +   +   +   +
         x
@@ -127,6 +139,7 @@ of the squares is dead.
 +   +   +   +   + 
 ```
 
+**Solution:**
 ```
 +   +   +   +   +
         x
@@ -152,6 +165,7 @@ edges.
 +   +   +   +   + 
 ```
 
+**Solution:**
 ```
 +   +   +   +   +
         x
@@ -193,6 +207,7 @@ case, where both edges are alive, is already dealt with by the cross structure.
 +   +   +   +   +   +   +   +
 ```
 
+**Solution:**
 ```
 +   +   +   +   +   +   +   +
     x               x
@@ -219,7 +234,7 @@ If there is a single incoming edge
 +   +   +   +   +   +   +   +
 ```
 
-
+**Solution:**
 ```
 +   +   +   +   +   +   +   +
     x               |
@@ -262,7 +277,7 @@ must be killed.
 +   +   +   + 
 ```
 
-
+**Solution:**
 ```
 +   +   +   +
         x  
