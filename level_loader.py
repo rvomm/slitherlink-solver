@@ -1,6 +1,11 @@
 import json
+import glob
+import os
 
 FILE_PATH = "data/levels.json"
+
+def all_levels():
+    return glob.glob(os.path.join("levels", "hard", "*.txt")) + glob.glob(os.path.join("levels", "medium", "*.txt"))
 
 def load_level_list():
     with open(FILE_PATH, 'r') as file:

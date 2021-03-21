@@ -9,16 +9,18 @@ from structure import Cross, TargetSquare, CrossPlusSquare, \
 
 class Board:
 
-    def __init__(self, constraints):
+    def __init__(self, constraints, prints=True):
         """
 
         :param constraints: rectangular list of digits. None means no digit in the corresponding square
+        :param print: boolean. If False no prints occur.
         """
         self.constraints = constraints
         self.nrow = len(constraints)
         self.ncol = len(constraints[0])
         self._initialize()
         self.pointgroups = []
+        self.prints = prints
 
     def _initialize(self):
         self._initialize_points()
@@ -59,7 +61,10 @@ class Board:
         for row in range(self.nrow+1):
             for col in range(self.ncol+1):
                 self._initialize_edge(row, col)
-    
+
+    def no_prints(self):
+        self.prints = False
+
     def _initialize_edge(self, row, col):
 
         here = self._point(row, col)
@@ -230,9 +235,7 @@ class Board:
                     if nr_of_nones == 2:
                         self.pointgroups.append(point_list)
                     if nr_of_nones == 0:
-                        if index_list[0] == index_list[1]:
-                            print("level solved")
-                        else:
+                        if index_list[0] != index_list[1]:
                             index_list.sort()
                             pointgroup_b = self.pointgroups.pop(index_list[1])
                             pointgroup_a = self.pointgroups.pop(index_list[0])
@@ -350,8 +353,9 @@ class Board:
         
         return edges
 
-    def print(self, with_line):
-        BoardPrinter(self).print(with_line)
+    def print(self, with_line, ignore_mute=False):
+        if self.prints or ignore_mute:
+            BoardPrinter(self).print(with_line)
 
     def solved(self):
         output = True
