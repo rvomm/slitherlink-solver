@@ -21,8 +21,9 @@ def report_all_levels():
         level_dict[key] = _board.solved()
         print(key)
         print("solved:", level_dict[key])
+    print("solved-|-path---------")
     for key, item in level_dict.items():
-        print(item, key)
+        print(str(item)+(" " if item else "")+"  |", key)
 
 
 
