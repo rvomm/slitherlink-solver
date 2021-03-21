@@ -13,6 +13,7 @@ if __name__ == "__main__":
         _board.solve_iteration()
         new_unknown_count = _board.unknonw_edge_count()
     _board.print(True)
+    print(_board.solved())
 
 
     

@@ -353,6 +353,16 @@ class Board:
     def print(self, with_line):
         BoardPrinter(self).print(with_line)
 
+    def solved(self):
+        output = True
+        for square in self.squares:
+            if not square._n_alive_equals_target():
+                output = False
+        for cross in self.crosses:
+            if cross.edge_set().n_alive() % 2 != 0:
+                output = False
+        return output
+
 class BoardPrinter: 
 
     def __init__(self, board):
